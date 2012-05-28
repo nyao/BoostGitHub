@@ -8,5 +8,7 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/org.eclipse.xtext.xbase.lib-gwt.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/guava-11.0.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/guava-gwt-11.0.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwtquery-1.1.1.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/github-api-gwt"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

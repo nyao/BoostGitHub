@@ -5,3 +5,4 @@ war/hello/
 war/WEB-INF/classes/
 war/WEB-INF/deploy/
 *._trace
+xtend-gen/
