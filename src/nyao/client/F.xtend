@@ -3,11 +3,11 @@ package nyao.client
 import com.google.gwt.query.client.Function
 import com.google.gwt.user.client.Event
 
-class FunctionF extends Function {
+class F extends Function {
 	(Event)=>boolean onSuccess = []
 	
 	def static Function func((Event)=>boolean onSuccess) {
-		val x = new FunctionF()
+		val x = new F()
 		x.f(onSuccess)
 		return x
 	}
