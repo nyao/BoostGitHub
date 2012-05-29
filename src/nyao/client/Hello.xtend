@@ -10,13 +10,28 @@ import com.github.nyao.gwtgithub.client.GitHubApi
 import com.github.nyao.gwtgithub.client.models.Repository
 import com.github.nyao.gwtgithub.client.models.Issue
 import com.google.gwt.core.client.JsArray
+import com.google.gwt.query.client.GQuery
+import com.google.gwt.core.client.JavaScriptObject
 
 class Hello implements EntryPoint {
     val api = new GitHubApi();
     
+    def getValue(GQuery gq) {
+    	gq.vals.get(0)
+    }
+    
+    def each(JsArray<? extends JavaScriptObject> items, (JavaScriptObject) => void f) {
+		var i = 0
+        while (i < items.length) {
+			val r = items.get(i)
+			f.apply(r)
+			i = i + 1
+        }
+    }
+    
 	override onModuleLoad() {
 		$("#LoginSubmit").click(func[
-            api.getRepositories($("#Login").vals.get(0), callback[
+            api.getRepositories($("#Login").value, callback[
             	onSuccessDo[addRepositories(it.data)]
             	onFailureDo[GWT::log("error", it)]
             ])
@@ -24,7 +39,7 @@ class Hello implements EntryPoint {
 		])
 		
 		$("#TokenSubmit").click(func[
-			api.setAuthorization($("#Token").vals.get(0))
+			api.setAuthorization($("#Token").value)
             api.getMyRepository(callback[
             	onSuccessDo[addRepositories(it.data)]
             	onFailureDo[GWT::log("error", it)]
@@ -35,12 +50,7 @@ class Hello implements EntryPoint {
 	
 	def void addRepositories(JsArray<Repository> rs) {
 		$("#Repositories tbody tr").remove
-		var i = 0
-        while (i < rs.length) {
-			val r = rs.get(i)
-			addRepository(r)
-			i = i + 1
-        }
+		rs.each([addRepository(it as Repository)])
 	}
 	
 	def addRepository(Repository r) {
@@ -59,17 +69,11 @@ class Hello implements EntryPoint {
                                         ])
                                         true
                                     ]))))
-        
 	}
 	
 	def void addIssues(JsArray<Issue> issues) {
 		$("#Issues tbody tr").remove
-		var i = 0
-        while (i < issues.length) {
-			val issue = issues.get(i)
-			addIssue(issue)
-			i = i + 1
-        }
+		issues.each([addIssue(it as Issue)])
 	}
 	
 	def addIssue(Issue issue) {
