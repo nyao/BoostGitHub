@@ -12,6 +12,8 @@
       }
     </style>
     <link href="./assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <script type="text/javascript" language="javascript" src="./assets/js/jquery.js"></script>
+    <script type="text/javascript" language="javascript" src="./assets/js/bootstrap.js"></script>
   </head>
 
   <body>
@@ -28,6 +30,12 @@
           <a class="brand" href="#">github api via GWT</a>
           <div class="nav-collapse">
             <ul class="nav">
+				<li class="dropdown">
+					<a class="dropdown-toggle" data-toggle="dropdown" href="#">Mine<b class="caret"></b></a>
+					<ul class="dropdown-menu" id="Mine">
+					</ul>
+				</li>
+				<li class="active"><a href="#" id="CurrentRepositoryName"></a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -46,9 +54,10 @@
                 </div>
             </div>
         </div>
+        
         <div class="row">
-            <div class="span6">
-                <h2>Repositories</h2>
+            <div class="span12">
+                <h2>Repositories <a href="#" id="toggleRepositories">»</a></h2>
                 <table id="Repositories" class="table table-bordered table-striped">
                     <thead>
                         <tr><th>name</th>
@@ -58,7 +67,10 @@
                     </tbody>
                 </table>
             </div>
-            <div class="span6">
+        </div>
+        
+        <div class="row">
+            <div class="span12">
                 <h2>Issues</h2>
                 <table id="Issues" class="table table-bordered table-striped">
                     <thead>
