@@ -66,6 +66,15 @@ class Hello implements EntryPoint {
     }
     
     def addOrgRepositories(GHUser org, JsArray<Repository> rs) {
+        $(".nav")
+            .append($("<li>").addClass("dropdown")
+                .append($("<a>").addClass("dropdown-toggle")
+                                .attr("data-toggle", "dropdown")
+                                .attr("href", "#")
+                                .text(org.login)
+                                .append($("<b>").addClass("caret")))
+                .append($("<ul>").addClass("dropdown-menu " + org.login)))
+        
         $("#Repositories .Orgs")
             .append($("<table>").addClass("table table-bordered table-striped " + org.login)
                 .append($("<thead>").append($("<tr>").append($("<th>").text(org.login))))
@@ -84,7 +93,7 @@ class Hello implements EntryPoint {
                         .attr("href", "#")
                         .click(func [
                             api.getIssues(r, callback[
-                                onSuccessDo[$("#CurrentRepositoryName").text(r.name);addIssues(it.data)]
+                                onSuccessDo[addIssues(r, it.data)]
                                 onFailureDo[GWT::log("error", it)]
                             ])
                             true
@@ -96,9 +105,12 @@ class Hello implements EntryPoint {
         $("#Repositories ." + kind + " tbody").append($("<tr>").append($("<td>").append(openIssues(r))))
     }
     
-    def void addIssues(JsArray<Issue> issues) {
+    def void addIssues(Repository r, JsArray<Issue> issues) {
+    	$(".nav .active").remove
         $("#Repositories").fadeOut(1000)
         $("#Issues tbody tr").remove
+        
+        $(".nav").append($("<li>").addClass("active").append($("<a>").attr("href", "#").text(r.name)))
         issues.each([addIssue(it as Issue)])
     }
     
