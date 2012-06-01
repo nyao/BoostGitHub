@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry combineaccessrules="false" kind="src" path="/xtendgwt"/>
 	<classpathentry kind="src" path="xtend-gen"/>
 	<classpathentry kind="con" path="org.eclipse.xtend.XTEND_CONTAINER"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/org.eclipse.xtext.xbase.lib-gwt.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/guava-11.0.1.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/guava-gwt-11.0.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwtquery-1.1.1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/github-api-gwt"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
