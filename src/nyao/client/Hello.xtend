@@ -9,9 +9,11 @@ import com.google.gwt.core.client.GWT
 import com.github.nyao.gwtgithub.client.GitHubApi
 import com.github.nyao.gwtgithub.client.models.Repository
 import com.github.nyao.gwtgithub.client.models.Issue
+import com.github.nyao.gwtgithub.client.models.GHUser
 import com.google.gwt.core.client.JsArray
 import com.google.gwt.query.client.GQuery
 import com.google.gwt.core.client.JavaScriptObject
+import com.github.nyao.gwtgithub.client.models.GHUsers
 
 class Hello implements EntryPoint {
     val api = new GitHubApi();
@@ -32,7 +34,7 @@ class Hello implements EntryPoint {
     override onModuleLoad() {
         $("#LoginSubmit").click(func[
             api.getRepositories($("#Login").value, callback[
-                onSuccessDo[addRepositories(it.data)]
+                onSuccessDo[addRepositories(it.data, "Repos")]
                 onFailureDo[GWT::log("error", it)]
             ])
             true
@@ -41,8 +43,11 @@ class Hello implements EntryPoint {
         $("#TokenSubmit").click(func[
             api.setAuthorization($("#Token").value)
             api.getMyRepository(callback[
-                onSuccessDo[addRepositories(it.data)]
+                onSuccessDo[addRepositories(it.data, "Repos")]
                 onFailureDo[GWT::log("error", it)]
+            ])
+            api.getOrganizations(callback[
+                onSuccessDo[addOrgs(it)]
             ])
             true
         ])
@@ -50,40 +55,49 @@ class Hello implements EntryPoint {
         $("#toggleRepositories").click(func[$("#Repositories").fadeToggle(1000);true])
     }
     
-    def void addRepositories(JsArray<Repository> rs) {
-        $("#Repositories .Mine tbody tr").remove
-        rs.each([addRepository(it as Repository)])
+    def addOrgs(GHUsers orgs) {
+        $("#Repositories .Orgs table").remove
+        orgs.data.each[
+            val org = it as GHUser
+            api.getRepositories(org.login, callback[
+                onSuccessDo[addOrgRepositories(org, it.data)]
+            ])
+        ]
     }
     
-    def addRepository(Repository r) {
-    	$("#Mine")
-    		.append($("<li>"))
-    			.append($("<a>").text(r.name + "(" + String::valueOf(r.openIssues) + ")")
-    							.attr("href", "#")
-    							.click(func [
-                                        api.getIssues(r, callback[
-                                            onSuccessDo[$("#CurrentRepositoryName").text(r.name);addIssues(it.data)]
-                                            onFailureDo[GWT::log("error", it)]
-                                        ])
-                                        true
-                                    ]))
-    	
-        $("#Repositories .Mine tbody")
-            .append($("<tr>")
-                .append($("<td>")
-                    .append($("<a>").text(r.name + "(" + String::valueOf(r.openIssues) + ")")))
-                    				.attr("href", "#")
-                                    .click(func [
-                                        api.getIssues(r, callback[
-                                            onSuccessDo[$("#CurrentRepositoryName").text(r.name);addIssues(it.data)]
-                                            onFailureDo[GWT::log("error", it)]
-                                        ])
-                                        true
-                                    ]))
+    def addOrgRepositories(GHUser org, JsArray<Repository> rs) {
+        $("#Repositories .Orgs")
+            .append($("<table>").addClass("table table-bordered table-striped " + org.login)
+                .append($("<thead>").append($("<tr>").append($("<th>").text(org.login))))
+                .append($("<tbody>"))
+        )
+        addRepositories(rs, org.login)
+    }
+    
+    def addRepositories(JsArray<Repository> rs, String kind) {
+        $("#Repositories ." + kind + " tbody tr").remove
+        rs.each([addRepository(it as Repository, kind)])
+    }
+    
+    def openIssues(Repository r) {
+    	$("<a>").text(r.name + "(" + String::valueOf(r.openIssues) + ")")
+                        .attr("href", "#")
+                        .click(func [
+                            api.getIssues(r, callback[
+                                onSuccessDo[$("#CurrentRepositoryName").text(r.name);addIssues(it.data)]
+                                onFailureDo[GWT::log("error", it)]
+                            ])
+                            true
+                        ])
+    }
+    
+    def addRepository(Repository r, String kind) {
+        $(".nav ." + kind).append($("<li>").append(openIssues(r)))
+        $("#Repositories ." + kind + " tbody").append($("<tr>").append($("<td>").append(openIssues(r))))
     }
     
     def void addIssues(JsArray<Issue> issues) {
-    	$("#Repositories").fadeOut(1000)
+        $("#Repositories").fadeOut(1000)
         $("#Issues tbody tr").remove
         issues.each([addIssue(it as Issue)])
     }

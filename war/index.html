@@ -30,12 +30,11 @@
           <a class="brand" href="#">Boost GitHub</a>
           <div class="nav-collapse">
             <ul class="nav">
-				<li class="dropdown">
-					<a class="dropdown-toggle" data-toggle="dropdown" href="#">Mine<b class="caret"></b></a>
-					<ul class="dropdown-menu" id="Mine">
-					</ul>
-				</li>
-				<li class="active"><a href="#" id="CurrentRepositoryName"></a></li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Repos<b class="caret"></b></a>
+                    <ul class="dropdown-menu Repos"></ul>
+                </li>
+                <li class="active"><a href="#" id="CurrentRepositoryName"></a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -58,32 +57,16 @@
         
         <h2>Repositories <a href="#" id="toggleRepositories">»</a></h2>
         <div class="row" id="Repositories">
-            <div class="span4 Mine">
+            <div class="span6 Repos">
                 <table class="table table-bordered table-striped">
                     <thead>
-                        <tr><th>Mine</th></tr>
+                        <tr><th>Repos</th></tr>
                     </thead>
                     <tbody> 
                     </tbody>
                 </table>
             </div>
-            <div class="span4 Org">
-                <table class="table table-bordered table-striped">
-                    <thead>
-                        <tr><th>Org</th></tr>
-                    </thead>
-                    <tbody> 
-                    </tbody>
-                </table>
-            </div>
-            <div class="span4 Watch">
-                <table class="table table-bordered table-striped">
-                    <thead>
-                        <tr><th>Watch</th></tr>
-                    </thead>
-                    <tbody> 
-                    </tbody>
-                </table>
+            <div class="span6 Orgs">
             </div>
         </div>
         
