@@ -51,7 +51,7 @@ class Hello implements EntryPoint {
     }
     
     def void addRepositories(JsArray<Repository> rs) {
-        $("#Repositories tbody tr").remove
+        $("#Repositories .Mine tbody tr").remove
         rs.each([addRepository(it as Repository)])
     }
     
@@ -68,21 +68,18 @@ class Hello implements EntryPoint {
                                         true
                                     ]))
     	
-        $("#Repositories tbody")
+        $("#Repositories .Mine tbody")
             .append($("<tr>")
-                .append($("<td>").text(r.name)
-                    .append($("<a>").attr("href",   r.htmlUrl)
-                                    .attr("target", "_blank")
-                                    .text("(_)")))
                 .append($("<td>")
-                    .append($("<a>").text(String::valueOf(r.openIssues))
+                    .append($("<a>").text(r.name + "(" + String::valueOf(r.openIssues) + ")")))
+                    				.attr("href", "#")
                                     .click(func [
                                         api.getIssues(r, callback[
                                             onSuccessDo[$("#CurrentRepositoryName").text(r.name);addIssues(it.data)]
                                             onFailureDo[GWT::log("error", it)]
                                         ])
                                         true
-                                    ]))))
+                                    ]))
     }
     
     def void addIssues(JsArray<Issue> issues) {

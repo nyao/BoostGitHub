@@ -56,13 +56,30 @@
             </div>
         </div>
         
-        <div class="row">
-            <div class="span12">
-                <h2>Repositories <a href="#" id="toggleRepositories">»</a></h2>
-                <table id="Repositories" class="table table-bordered table-striped">
+        <h2>Repositories <a href="#" id="toggleRepositories">»</a></h2>
+        <div class="row" id="Repositories">
+            <div class="span4 Mine">
+                <table class="table table-bordered table-striped">
                     <thead>
-                        <tr><th>name</th>
-                            <th>issues</th></tr>
+                        <tr><th>Mine</th></tr>
+                    </thead>
+                    <tbody> 
+                    </tbody>
+                </table>
+            </div>
+            <div class="span4 Org">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr><th>Org</th></tr>
+                    </thead>
+                    <tbody> 
+                    </tbody>
+                </table>
+            </div>
+            <div class="span4 Watch">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr><th>Watch</th></tr>
                     </thead>
                     <tbody> 
                     </tbody>
@@ -70,9 +87,9 @@
             </div>
         </div>
         
+        <h2>Issues</h2>
         <div class="row">
             <div class="span12">
-                <h2>Issues</h2>
                 <table id="Issues" class="table table-bordered table-striped">
                     <thead>
                         <tr><th>number</th>
