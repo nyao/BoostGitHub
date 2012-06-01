@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Boost GitHub</title>
+    <script type="text/javascript" language="javascript" src="hello/hello.nocache.js"></script>
+    
+    <link href="./assets/css/bootstrap.css" rel="stylesheet">
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
+    <link href="./assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <script type="text/javascript" language="javascript" src="./assets/js/jquery.js"></script>
+    <script type="text/javascript" language="javascript" src="./assets/js/bootstrap.js"></script>
+  </head>
+
+  <body>
+    <iframe src="javascript:''" id="__gwt_historyFrame" tabIndex='-1' style="position:absolute;width:0;height:0;border:0"></iframe>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">Boost GitHub</a>
+          <div class="nav-collapse">
+            <ul class="nav"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container">
+        <div class="row">
+            <div class="span12">
+                 <div class="well form-inline">
+                    <input id="Login" type="text" class="span2" placeholder="Login">
+                    <button id="LoginSubmit" class="btn">Submit</button>
+                    <p>or</p>
+                    <input id="Token" type="text" class="span4" placeholder="Token">
+                    <button id="TokenSubmit" class="btn">Submit</button>
+                    <a href="http://auth.boostgithub.appspot.com/auth" target="_blank">auth</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row" id="Repositories">
+            <div class="span6 Repos">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr><th>Repos</th></tr>
+                    </thead>
+                    <tbody> 
+                    </tbody>
+                </table>
+            </div>
+            <div class="span6 Orgs">
+            </div>
+        </div>
+        
+        <div class="row" id="Issues">
+            <div class="span12">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr><th>number</th>
+                            <th>title</th></tr>
+                    </thead>
+                    <tbody> 
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+  </body>
+</html>
