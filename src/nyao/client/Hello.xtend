@@ -32,14 +32,18 @@ class Hello implements EntryPoint {
     
     override onModuleLoad() {
         $("#LoginSubmit").click(func[
+            $("#Authorization").fadeOut(1000)
+            $(".username").text($("#Login").value)
             $("#Repositories").fadeIn(1000)
             api.getRepositories($("#Login").value, onCallback[showRepositories(it.data, "Repos")])
             true
         ])
         
         $("#TokenSubmit").click(func[
+            $("#Authorization").fadeOut(1000)
             $("#Repositories").fadeIn(1000)
             api.setAuthorization($("#Token").value)
+            api.getUser(onCallback[$(".username").text(it.login)])
             api.getMyRepository(onCallback[showRepositories(it.data, "Repos")])
             api.getOrganizations(onCallback[showOrgs(it)])
             true
@@ -47,6 +51,7 @@ class Hello implements EntryPoint {
         
         $("#Repositories").hide
         $("#Issues").hide
+        $("#User").click(func[$("#Authorization").fadeIn(1000);true])
     }
     
     def showOrgs(GHUsers orgs) {
