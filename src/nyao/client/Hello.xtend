@@ -33,6 +33,7 @@ class Hello implements EntryPoint {
     
     override onModuleLoad() {
         $("#LoginSubmit").click(func[
+            $("#Repositories").fadeIn(1000)
             api.getRepositories($("#Login").value, callback[
                 onSuccessDo[addRepositories(it.data, "Repos")]
                 onFailureDo[GWT::log("error", it)]
@@ -41,6 +42,7 @@ class Hello implements EntryPoint {
         ])
         
         $("#TokenSubmit").click(func[
+            $("#Repositories").fadeIn(1000)
             api.setAuthorization($("#Token").value)
             api.getMyRepository(callback[
                 onSuccessDo[addRepositories(it.data, "Repos")]
