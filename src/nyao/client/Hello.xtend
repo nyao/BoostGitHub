@@ -54,7 +54,8 @@ class Hello implements EntryPoint {
             true
         ])
         
-        $("#toggleRepositories").click(func[$("#Repositories").fadeToggle(1000);true])
+        $("#Repositories").hide
+        $("#Issues").hide
     }
     
     def addOrgs(GHUsers orgs) {
@@ -113,6 +114,7 @@ class Hello implements EntryPoint {
         $("#Repositories").fadeOut(1000)
         $("#Issues tbody tr").remove
         
+        $("#Issues").fadeIn(1000)
         $(".nav").append($("<li>").addClass("active").append($("<a>").attr("href", "#").text(r.name)))
         issues.each([addIssue(it as Issue)])
     }
