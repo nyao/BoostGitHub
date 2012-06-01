@@ -90,14 +90,14 @@ class Hello implements EntryPoint {
     
     def openIssues(Repository r) {
     	$("<a>").text(r.name + "(" + String::valueOf(r.openIssues) + ")")
-                        .attr("href", "#")
-                        .click(func [
-                            api.getIssues(r, callback[
-                                onSuccessDo[addIssues(r, it.data)]
-                                onFailureDo[GWT::log("error", it)]
-                            ])
-                            true
-                        ])
+                .attr("href", "#")
+                .click(func [
+                    api.getIssues(r, callback[
+                        onSuccessDo[addIssues(r, it.data)]
+                        onFailureDo[GWT::log("error", it)]
+                    ])
+                    true
+                ])
     }
     
     def addRepository(Repository r, String kind) {
