@@ -2,10 +2,9 @@ package nyao.client
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.client.F.*
-import static nyao.client.ConfigurableAsyncCallback.*
+import static nyao.client.SimpleAsyncCallback.*
 
 import com.google.gwt.core.client.EntryPoint
-import com.google.gwt.core.client.GWT
 import com.github.nyao.gwtgithub.client.GitHubApi
 import com.github.nyao.gwtgithub.client.models.Repository
 import com.github.nyao.gwtgithub.client.models.Issue
@@ -34,23 +33,15 @@ class Hello implements EntryPoint {
     override onModuleLoad() {
         $("#LoginSubmit").click(func[
             $("#Repositories").fadeIn(1000)
-            api.getRepositories($("#Login").value, callback[
-                onSuccessDo[showRepositories(it.data, "Repos")]
-                onFailureDo[GWT::log("error", it)]
-            ])
+            api.getRepositories($("#Login").value, onCallback[showRepositories(it.data, "Repos")])
             true
         ])
         
         $("#TokenSubmit").click(func[
             $("#Repositories").fadeIn(1000)
             api.setAuthorization($("#Token").value)
-            api.getMyRepository(callback[
-                onSuccessDo[showRepositories(it.data, "Repos")]
-                onFailureDo[GWT::log("error", it)]
-            ])
-            api.getOrganizations(callback[
-                onSuccessDo[showOrgs(it)]
-            ])
+            api.getMyRepository(onCallback[showRepositories(it.data, "Repos")])
+            api.getOrganizations(onCallback[showOrgs(it)])
             true
         ])
         
@@ -62,9 +53,7 @@ class Hello implements EntryPoint {
         $("#Repositories .Orgs table").remove
         orgs.data.each[
             val org = it as GHUser
-            api.getRepositories(org.login, callback[
-                onSuccessDo[showOrgRepositories(org, it.data)]
-            ])
+            api.getRepositories(org.login, onCallback[showOrgRepositories(org, it.data)])
         ]
     }
     
@@ -96,10 +85,7 @@ class Hello implements EntryPoint {
         $("<a>").text(r.name + "(" + String::valueOf(r.openIssues) + ")")
                 .attr("href", "#")
                 .click(func [
-                    api.getIssues(r, callback[
-                        onSuccessDo[showIssues(r, it.data)]
-                        onFailureDo[GWT::log("error", it)]
-                    ])
+                    api.getIssues(r, onCallback[showIssues(r, it.data)])
                     true
                 ])
     }
