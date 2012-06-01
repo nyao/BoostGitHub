@@ -51,6 +51,7 @@ class Hello implements EntryPoint {
         
         $("#Repositories").hide
         $("#Issues").hide
+        $("#Authorization .close").click(func[$("#Authorization").fadeOut(1000);true])
         $("#User").click(func[$("#Authorization").fadeIn(1000);true])
     }
     
