@@ -58,7 +58,6 @@ class Hello implements EntryPoint {
     }
     
     def addOrgs(GHUsers orgs) {
-        $(".nav .Orgs-nav").remove
         $("#Repositories .Orgs table").remove
         orgs.data.each[
             val org = it as GHUser
@@ -69,15 +68,6 @@ class Hello implements EntryPoint {
     }
     
     def addOrgRepositories(GHUser org, JsArray<Repository> rs) {
-        $(".nav")
-            .append($("<li>").addClass("dropdown Orgs-nav")
-                .append($("<a>").addClass("dropdown-toggle")
-                                .attr("data-toggle", "dropdown")
-                                .attr("href", "#")
-                                .text(org.login)
-                                .append($("<b>").addClass("caret")))
-                .append($("<ul>").addClass("dropdown-menu " + org.login)))
-        
         $("#Repositories .Orgs")
             .append($("<table>").addClass("table table-bordered table-striped " + org.login)
                 .append($("<thead>").append($("<tr>").append($("<th>").text(org.login))))
@@ -87,6 +77,16 @@ class Hello implements EntryPoint {
     }
     
     def addRepositories(JsArray<Repository> rs, String kind) {
+        $(".nav ." + kind).remove
+        $(".nav")
+            .append($("<li>").addClass("dropdown " + kind)
+                .append($("<a>").addClass("dropdown-toggle")
+                                .attr("data-toggle", "dropdown")
+                                .attr("href", "#")
+                                .text(kind)
+                                .append($("<b>").addClass("caret")))
+                .append($("<ul>").addClass("dropdown-menu " + kind)))
+        
         $("#Repositories ." + kind + " tbody tr").remove
         rs.each([addRepository(it as Repository, kind)])
     }
@@ -104,7 +104,7 @@ class Hello implements EntryPoint {
     }
     
     def addRepository(Repository r, String kind) {
-        $(".nav ." + kind).append($("<li>").append(openIssues(r)))
+        $(".nav ." + kind + " ul").append($("<li>").append(openIssues(r)))
         $("#Repositories ." + kind + " tbody").append($("<tr>").append($("<td>").append(openIssues(r))))
     }
     
