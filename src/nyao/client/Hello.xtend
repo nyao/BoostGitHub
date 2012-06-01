@@ -35,7 +35,7 @@ class Hello implements EntryPoint {
         $("#LoginSubmit").click(func[
             $("#Repositories").fadeIn(1000)
             api.getRepositories($("#Login").value, callback[
-                onSuccessDo[addRepositories(it.data, "Repos")]
+                onSuccessDo[showRepositories(it.data, "Repos")]
                 onFailureDo[GWT::log("error", it)]
             ])
             true
@@ -45,11 +45,11 @@ class Hello implements EntryPoint {
             $("#Repositories").fadeIn(1000)
             api.setAuthorization($("#Token").value)
             api.getMyRepository(callback[
-                onSuccessDo[addRepositories(it.data, "Repos")]
+                onSuccessDo[showRepositories(it.data, "Repos")]
                 onFailureDo[GWT::log("error", it)]
             ])
             api.getOrganizations(callback[
-                onSuccessDo[addOrgs(it)]
+                onSuccessDo[showOrgs(it)]
             ])
             true
         ])
@@ -58,26 +58,26 @@ class Hello implements EntryPoint {
         $("#Issues").hide
     }
     
-    def addOrgs(GHUsers orgs) {
+    def showOrgs(GHUsers orgs) {
         $("#Repositories .Orgs table").remove
         orgs.data.each[
             val org = it as GHUser
             api.getRepositories(org.login, callback[
-                onSuccessDo[addOrgRepositories(org, it.data)]
+                onSuccessDo[showOrgRepositories(org, it.data)]
             ])
         ]
     }
     
-    def addOrgRepositories(GHUser org, JsArray<Repository> rs) {
+    def showOrgRepositories(GHUser org, JsArray<Repository> rs) {
         $("#Repositories .Orgs")
             .append($("<table>").addClass("table table-bordered table-striped " + org.login)
                 .append($("<thead>").append($("<tr>").append($("<th>").text(org.login))))
                 .append($("<tbody>"))
         )
-        addRepositories(rs, org.login)
+        showRepositories(rs, org.login)
     }
     
-    def addRepositories(JsArray<Repository> rs, String kind) {
+    def showRepositories(JsArray<Repository> rs, String kind) {
         $(".nav ." + kind).remove
         $(".nav")
             .append($("<li>").addClass("dropdown " + kind)
@@ -92,12 +92,12 @@ class Hello implements EntryPoint {
         rs.each([addRepository(it as Repository, kind)])
     }
     
-    def openIssues(Repository r) {
-    	$("<a>").text(r.name + "(" + String::valueOf(r.openIssues) + ")")
+    def openIssuesAnchor(Repository r) {
+        $("<a>").text(r.name + "(" + String::valueOf(r.openIssues) + ")")
                 .attr("href", "#")
                 .click(func [
                     api.getIssues(r, callback[
-                        onSuccessDo[addIssues(r, it.data)]
+                        onSuccessDo[showIssues(r, it.data)]
                         onFailureDo[GWT::log("error", it)]
                     ])
                     true
@@ -105,11 +105,11 @@ class Hello implements EntryPoint {
     }
     
     def addRepository(Repository r, String kind) {
-        $(".nav ." + kind + " ul").append($("<li>").append(openIssues(r)))
-        $("#Repositories ." + kind + " tbody").append($("<tr>").append($("<td>").append(openIssues(r))))
+        $(".nav ." + kind + " ul").append($("<li>").append(openIssuesAnchor(r)))
+        $("#Repositories ." + kind + " tbody").append($("<tr>").append($("<td>").append(openIssuesAnchor(r))))
     }
     
-    def void addIssues(Repository r, JsArray<Issue> issues) {
+    def void showIssues(Repository r, JsArray<Issue> issues) {
     	$(".nav .active").remove
         $("#Repositories").fadeOut(1000)
         $("#Issues tbody tr").remove
