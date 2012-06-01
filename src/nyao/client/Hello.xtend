@@ -58,6 +58,7 @@ class Hello implements EntryPoint {
     }
     
     def addOrgs(GHUsers orgs) {
+        $(".nav .Orgs-nav").remove
         $("#Repositories .Orgs table").remove
         orgs.data.each[
             val org = it as GHUser
@@ -69,7 +70,7 @@ class Hello implements EntryPoint {
     
     def addOrgRepositories(GHUser org, JsArray<Repository> rs) {
         $(".nav")
-            .append($("<li>").addClass("dropdown")
+            .append($("<li>").addClass("dropdown Orgs-nav")
                 .append($("<a>").addClass("dropdown-toggle")
                                 .attr("data-toggle", "dropdown")
                                 .attr("href", "#")
