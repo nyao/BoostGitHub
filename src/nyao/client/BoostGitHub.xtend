@@ -14,7 +14,7 @@ import com.google.gwt.query.client.GQuery
 import com.google.gwt.core.client.JavaScriptObject
 import com.github.nyao.gwtgithub.client.models.GHUsers
 
-class Hello implements EntryPoint {
+class BoostGitHub implements EntryPoint {
     val api = new GitHubApi();
     
     def getValue(GQuery gq) {
