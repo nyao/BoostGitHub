@@ -105,7 +105,13 @@ class BoostGitHub implements EntryPoint {
         $(".nav")
             .append($("<li>").addClass("active")
                 .append($("<a>").attr("href", "#").text(r.name)))
-        issues.each([$("#Issues tbody").append(aIssue(it as Issue))])
+        
+        issues.each([
+            val i = it as Issue
+            val ms = if (i.milestone == null) "Backlog" else i.milestone.title
+            if ($("#Issues ." + ms).isEmpty) $("#Issues .milestones").append(aMilestone(ms))
+            $("#Issues ." + ms + " tbody").append(aIssue(i))
+        ])
     }
     
     def aIssue(Issue issue) {
@@ -115,5 +121,16 @@ class BoostGitHub implements EntryPoint {
                                 .attr("target", "_blank")
                                 .text("#" + String::valueOf(issue.number))))
             .append($("<td>").text(issue.title))
+    }
+    
+    def aMilestone(String title) {
+        $("<div>").addClass(title)
+            .append($("<h2>").text(title))
+            .append($("<table>").addClass("table table-bordered table-striped")
+                .append($("<thead>")
+                    .append($("<tr>")
+                        .append($("<th>").text("number"))
+                        .append($("<th>").text("title"))))
+                .append($("<tbody>")))
     }
 }
