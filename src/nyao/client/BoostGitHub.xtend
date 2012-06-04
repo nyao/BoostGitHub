@@ -20,9 +20,11 @@ class BoostGitHub implements EntryPoint {
     override onModuleLoad() {
         $("#LoginSubmit").click(clickEvent[
             $("#Authorization").fadeOut(1000)
-            $(".username").text($("#Login").value)
+            val user = $("#Login").value
+            $(".username").text(user)
             $("#Repositories").fadeIn(1000)
-            api.getRepositories($("#Login").value, callback[showRepositories(it.data, "Repos")])
+            api.getRepositories(user, callback[showRepositories(it.data, "Repos")])
+            api.getOrganizations(user, callback[showOrgs(it)])
             true
         ])
         
