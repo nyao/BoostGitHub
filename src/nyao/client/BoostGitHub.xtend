@@ -53,39 +53,42 @@ class BoostGitHub implements EntryPoint {
     def showOrgRepositories(GHUser org, JsArray<Repository> rs) {
         $("#Repositories .Orgs")
             .append($("<table>").addClass("table table-bordered table-striped " + org.login)
-                .append($("<thead>").append($("<tr>").append($("<th>").text(org.login))))
-                .append($("<tbody>"))
-        )
+                .append($("<thead>")
+                    .append($("<tr>")
+                        .append($("<th>").text(org.login))))
+                .append($("<tbody>")))
         showRepositories(rs, org.login)
     }
     
     def showRepositories(JsArray<Repository> rs, String kind) {
         $(".nav ." + kind).remove
-        $(".nav")
-            .append($("<li>").addClass("dropdown " + kind)
-                .append($("<a>").addClass("dropdown-toggle")
-                                .attr("data-toggle", "dropdown")
-                                .attr("href", "#")
-                                .text(kind)
-                                .append($("<b>").addClass("caret")))
-                .append($("<ul>").addClass("dropdown-menu " + kind)))
+        $(".nav").append(aDropdownMenu(kind))
         
         $("#Repositories ." + kind + " tbody tr").remove
-        rs.each([addRepository(it as Repository, kind)])
+        rs.each([
+            val r = it as Repository
+            $(".nav ." + kind + " ul").append($("<li>").append(aOpenIssues(r)))
+            $("#Repositories ." + kind + " tbody").append($("<tr>").append($("<td>").append(aOpenIssues(r))))
+        ])
     }
     
-    def openIssuesAnchor(Repository r) {
+    def aDropdownMenu(String kind) {
+        $("<li>").addClass("dropdown " + kind)
+            .append($("<a>").addClass("dropdown-toggle")
+                            .attr("data-toggle", "dropdown")
+                            .attr("href", "#")
+                            .text(kind)
+                            .append($("<b>").addClass("caret")))
+            .append($("<ul>").addClass("dropdown-menu " + kind))
+    }
+    
+    def aOpenIssues(Repository r) {
         $("<a>").text(r.name + "(" + String::valueOf(r.openIssues) + ")")
                 .attr("href", "#")
                 .click(clickEvent [
                     api.getIssues(r, callback[showIssues(r, it.data)])
                     true
                 ])
-    }
-    
-    def addRepository(Repository r, String kind) {
-        $(".nav ." + kind + " ul").append($("<li>").append(openIssuesAnchor(r)))
-        $("#Repositories ." + kind + " tbody").append($("<tr>").append($("<td>").append(openIssuesAnchor(r))))
     }
     
     def void showIssues(Repository r, JsArray<Issue> issues) {
@@ -95,16 +98,15 @@ class BoostGitHub implements EntryPoint {
         
         $("#Issues").fadeIn(1000)
         $(".nav").append($("<li>").addClass("active").append($("<a>").attr("href", "#").text(r.name)))
-        issues.each([addIssue(it as Issue)])
+        issues.each([$("#Issues tbody").append(aIssue(it as Issue))])
     }
     
-    def addIssue(Issue issue) {
-        $("#Issues tbody")
-            .append($("<tr>")
-                .append($("<td>")
-                    .append($("<a>").attr("href",   issue.htmlUrl)
-                                    .attr("target", "_blank")
-                                    .text("#" + String::valueOf(issue.number))))
-                .append($("<td>").text(issue.title)))
+    def aIssue(Issue issue) {
+        $("<tr>")
+            .append($("<td>")
+                .append($("<a>").attr("href",   issue.htmlUrl)
+                                .attr("target", "_blank")
+                                .text("#" + String::valueOf(issue.number))))
+            .append($("<td>").text(issue.title))
     }
 }
