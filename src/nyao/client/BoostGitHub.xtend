@@ -6,7 +6,7 @@ import com.github.nyao.gwtgithub.client.models.Repository
 import com.github.nyao.gwtgithub.client.models.Issue
 import com.github.nyao.gwtgithub.client.models.GHUser
 import com.google.gwt.core.client.JsArray
-import com.github.nyao.gwtgithub.client.models.GHUsers
+import com.github.nyao.gwtgithub.client.api.Users
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.XtendFunction.*
@@ -44,7 +44,7 @@ class BoostGitHub implements EntryPoint {
         $("#User").click(clickEvent[$("#Authorization").fadeIn(1000);true])
     }
     
-    def showOrgs(GHUsers orgs) {
+    def showOrgs(Users orgs) {
         $("#Repositories .Orgs table").remove
         orgs.data.each[org|
             api.getRepositories(org.login, callback[showOrgRepositories(org, it.data)])
