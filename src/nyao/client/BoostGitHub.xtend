@@ -46,8 +46,7 @@ class BoostGitHub implements EntryPoint {
     
     def showOrgs(GHUsers orgs) {
         $("#Repositories .Orgs table").remove
-        orgs.data.each[
-            val org = it as GHUser
+        orgs.data.each[org|
             api.getRepositories(org.login, callback[showOrgRepositories(org, it.data)])
         ]
     }
@@ -67,8 +66,7 @@ class BoostGitHub implements EntryPoint {
         $(".nav").append(aDropdownMenu(kind))
         
         $("#Repositories ." + kind + " tbody tr").remove
-        rs.each([
-            val r = it as Repository
+        rs.each([r|
             $(".nav ." + kind + " ul")
                 .append($("<li>").append(aOpenIssues(r)))
             $("#Repositories ." + kind + " tbody")
@@ -106,12 +104,11 @@ class BoostGitHub implements EntryPoint {
             .append($("<li>").addClass("active")
                 .append($("<a>").attr("href", "#").text(r.name)))
         
-        issues.map([it.milestone]).filterNull.sortBy([createdAt]).forEach([
+        issues.map([it.milestone]).filterNull.forEach([
             if ($("#Issues ." + it.title).isEmpty) $("#Issues .milestones").append(aMilestone(it.title))
         ])
         
-        issues.each([
-            val i = it as Issue
+        issues.<Issue>each([i|
             val ms = if (i.milestone == null) "Backlog" else i.milestone.title
             $("#Issues ." + ms + " tbody").append(aIssue(i))
         ])

@@ -12,7 +12,7 @@ class XtendGQuery {
         gq.vals.get(0)
     }
     
-    def static <T extends JavaScriptObject> each(JsArray<T> items, (JavaScriptObject) => void f) {
+    def static <T extends JavaScriptObject> each(JsArray<T> items, (T) => void f) {
         var i = 0
         while (i < items.length) {
             val r = items.get(i)
