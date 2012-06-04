@@ -5,7 +5,7 @@ import com.google.gwt.core.client.GWT
 
 class SimpleAsyncCallback<T> implements AsyncCallback<T> {
     
-    def static <T> AsyncCallback<T> onCallback((T)=>void onSuccess) {
+    def static <T> AsyncCallback<T> callback((T)=>void onSuccess) {
         val x = new SimpleAsyncCallback<T>()
         x.onSuccessDo(onSuccess)
         return x

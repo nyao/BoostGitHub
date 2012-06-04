@@ -1,11 +1,5 @@
 package nyao.client
 
-import static com.google.gwt.query.client.GQuery.*
-import static nyao.util.XtendFunction.*
-import static nyao.util.SimpleAsyncCallback.*
-
-import static extension nyao.util.XtendGQuery.*
-
 import com.google.gwt.core.client.EntryPoint
 import com.github.nyao.gwtgithub.client.GitHubApi
 import com.github.nyao.gwtgithub.client.models.Repository
@@ -13,6 +7,12 @@ import com.github.nyao.gwtgithub.client.models.Issue
 import com.github.nyao.gwtgithub.client.models.GHUser
 import com.google.gwt.core.client.JsArray
 import com.github.nyao.gwtgithub.client.models.GHUsers
+
+import static com.google.gwt.query.client.GQuery.*
+import static nyao.util.XtendFunction.*
+import static nyao.util.SimpleAsyncCallback.*
+
+import static extension nyao.util.XtendGQuery.*
 
 class BoostGitHub implements EntryPoint {
     val api = new GitHubApi();
@@ -22,7 +22,7 @@ class BoostGitHub implements EntryPoint {
             $("#Authorization").fadeOut(1000)
             $(".username").text($("#Login").value)
             $("#Repositories").fadeIn(1000)
-            api.getRepositories($("#Login").value, onCallback[showRepositories(it.data, "Repos")])
+            api.getRepositories($("#Login").value, callback[showRepositories(it.data, "Repos")])
             true
         ])
         
@@ -30,9 +30,9 @@ class BoostGitHub implements EntryPoint {
             $("#Authorization").fadeOut(1000)
             $("#Repositories").fadeIn(1000)
             api.setAuthorization($("#Token").value)
-            api.getUser(onCallback[$(".username").text(it.login)])
-            api.getMyRepository(onCallback[showRepositories(it.data, "Repos")])
-            api.getOrganizations(onCallback[showOrgs(it)])
+            api.getUser(callback[$(".username").text(it.login)])
+            api.getMyRepository(callback[showRepositories(it.data, "Repos")])
+            api.getOrganizations(callback[showOrgs(it)])
             true
         ])
         
@@ -46,7 +46,7 @@ class BoostGitHub implements EntryPoint {
         $("#Repositories .Orgs table").remove
         orgs.data.each[
             val org = it as GHUser
-            api.getRepositories(org.login, onCallback[showOrgRepositories(org, it.data)])
+            api.getRepositories(org.login, callback[showOrgRepositories(org, it.data)])
         ]
     }
     
@@ -78,7 +78,7 @@ class BoostGitHub implements EntryPoint {
         $("<a>").text(r.name + "(" + String::valueOf(r.openIssues) + ")")
                 .attr("href", "#")
                 .click(clickEvent [
-                    api.getIssues(r, onCallback[showIssues(r, it.data)])
+                    api.getIssues(r, callback[showIssues(r, it.data)])
                     true
                 ])
     }
