@@ -106,10 +106,13 @@ class BoostGitHub implements EntryPoint {
             .append($("<li>").addClass("active")
                 .append($("<a>").attr("href", "#").text(r.name)))
         
+        issues.map([it.milestone]).filterNull.sortBy([createdAt]).forEach([
+            if ($("#Issues ." + it.title).isEmpty) $("#Issues .milestones").append(aMilestone(it.title))
+        ])
+        
         issues.each([
             val i = it as Issue
             val ms = if (i.milestone == null) "Backlog" else i.milestone.title
-            if ($("#Issues ." + ms).isEmpty) $("#Issues .milestones").append(aMilestone(ms))
             $("#Issues ." + ms + " tbody").append(aIssue(i))
         ])
     }

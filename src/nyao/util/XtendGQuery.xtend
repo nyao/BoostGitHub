@@ -12,7 +12,7 @@ class XtendGQuery {
         gq.vals.get(0)
     }
     
-    def static each(JsArray<? extends JavaScriptObject> items, (JavaScriptObject) => void f) {
+    def static <T extends JavaScriptObject> each(JsArray<T> items, (JavaScriptObject) => void f) {
         var i = 0
         while (i < items.length) {
             val r = items.get(i)
@@ -21,7 +21,7 @@ class XtendGQuery {
         }
     }
     
-    def static <T> List<T> map(JsArray<? extends JavaScriptObject> items, (JavaScriptObject) => T f) {
+    def static <T, K extends JavaScriptObject> List<T> map(JsArray<K> items, (K) => T f) {
         val result = new ArrayList<T>()
         var i = 0
         while (i < items.length) {
