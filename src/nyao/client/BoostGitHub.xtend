@@ -69,8 +69,11 @@ class BoostGitHub implements EntryPoint {
         $("#Repositories ." + kind + " tbody tr").remove
         rs.each([
             val r = it as Repository
-            $(".nav ." + kind + " ul").append($("<li>").append(aOpenIssues(r)))
-            $("#Repositories ." + kind + " tbody").append($("<tr>").append($("<td>").append(aOpenIssues(r))))
+            $(".nav ." + kind + " ul")
+                .append($("<li>").append(aOpenIssues(r)))
+            $("#Repositories ." + kind + " tbody")
+                .append($("<tr>")
+                    .append($("<td>").append(aOpenIssues(r))))
         ])
     }
     
@@ -99,7 +102,9 @@ class BoostGitHub implements EntryPoint {
         $("#Issues tbody tr").remove
         
         $("#Issues").fadeIn(1000)
-        $(".nav").append($("<li>").addClass("active").append($("<a>").attr("href", "#").text(r.name)))
+        $(".nav")
+            .append($("<li>").addClass("active")
+                .append($("<a>").attr("href", "#").text(r.name)))
         issues.each([$("#Issues tbody").append(aIssue(it as Issue))])
     }
     
