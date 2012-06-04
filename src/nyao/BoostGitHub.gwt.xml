@@ -11,4 +11,5 @@
 	<entry-point class='nyao.client.BoostGitHub' />
 	
 	<source path="client"/>
+    <source path="util"/>
 </module>

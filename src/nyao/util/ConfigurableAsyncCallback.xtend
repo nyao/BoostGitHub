@@ -1,4 +1,4 @@
-package nyao.client
+package nyao.util
 
 import com.google.gwt.user.client.rpc.AsyncCallback
 
