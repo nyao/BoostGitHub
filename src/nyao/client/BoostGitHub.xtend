@@ -130,10 +130,6 @@ class BoostGitHub implements EntryPoint {
         $("<div>").addClass(title)
             .append($("<h2>").text(title))
             .append($("<table>").addClass("table table-bordered table-striped")
-                .append($("<thead>")
-                    .append($("<tr>")
-                        .append($("<th>").text("number"))
-                        .append($("<th>").text("title"))))
                 .append($("<tbody>")))
     }
 }
