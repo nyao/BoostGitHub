@@ -7,6 +7,7 @@ import com.github.nyao.gwtgithub.client.models.Issue
 import com.github.nyao.gwtgithub.client.models.Repository
 import com.google.gwt.core.client.EntryPoint
 import com.google.gwt.core.client.JsArray
+import com.google.gwt.query.client.GQuery
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.SimpleAsyncCallback.*
@@ -113,17 +114,53 @@ class BoostGitHub implements EntryPoint {
         
         issues.each([i|
             val ms = if (i.milestone == null) "Backlog" else i.milestone.title
-            $("#Issues ." + ms + " tbody").append(aIssue(i))
+            val aIssue = aIssue(i)
+            val aDetail = aIssueDetail(i).hide
+            aIssue.click(showIssueDetail(aDetail, i, r))
+            $("#Issues ." + ms + " tbody").append(aIssue)
+            $("#Issues ." + ms + " tbody").append(aDetail)
         ])
+    }
+    
+    def showIssueDetail(GQuery detail, Issue i, Repository r) {
+        clickEvent[
+            if (!detail.isVisible) {
+                val panel = $("<td colspan='2'>")
+                api.getComment(r, i, callback[
+                    detail.children.remove
+                    val cs = $("<div>").addClass("comments")
+                                       .css("max-height", "250px")
+                                       .css("overflow", "auto")
+                    it.data.each([
+                        cs.append($("<div>").addClass("comment")
+                            .append($("<img>").attr("src", it.user.avatarUrl)
+                                              .attr("height", "48")
+                                              .attr("width", "48"))
+                            .append($("<pre>").text(it.body)))
+                    ])
+                    panel.append(cs)
+                    detail.append(panel)
+                ])
+            }
+            detail.fadeToggle(1000)
+            true
+        ]
     }
     
     def aIssue(Issue issue) {
         $("<tr>")
-            .append($("<td>")
+            .append($("<td>").addClass("span1")
                 .append($("<a>").attr("href",   issue.htmlUrl)
                                 .attr("target", "_blank")
                                 .text("#" + String::valueOf(issue.number))))
-            .append($("<td>").text(issue.title))
+            .append($("<td>").text(issue.title)
+                .append($("<img>").attr("src", issue.user.avatarUrl)
+                                  .attr("height", "18")
+                                  .attr("width", "18")))
+    }
+    
+    def aIssueDetail(Issue issue) {
+        $("<tr>")
     }
     
     def aMilestone(String title) {
