@@ -1,16 +1,11 @@
 package nyao.util
 
-import com.google.gwt.query.client.GQuery
 import com.google.gwt.core.client.JsArray
 import com.google.gwt.core.client.JavaScriptObject
 import java.util.List
 import java.util.ArrayList
 
 class XtendGQuery {
-    
-    def static getValue(GQuery gq) {
-        gq.vals.get(0)
-    }
     
     def static <T extends JavaScriptObject> each(JsArray<T> items, (T) => void f) {
         var i = 0

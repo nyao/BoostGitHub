@@ -1,17 +1,18 @@
 package nyao.client
 
-import com.google.gwt.core.client.EntryPoint
 import com.github.nyao.gwtgithub.client.GitHubApi
-import com.github.nyao.gwtgithub.client.models.Repository
-import com.github.nyao.gwtgithub.client.models.Issue
-import com.github.nyao.gwtgithub.client.models.GHUser
-import com.google.gwt.core.client.JsArray
 import com.github.nyao.gwtgithub.client.api.Users
+import com.github.nyao.gwtgithub.client.models.GHUser
+import com.github.nyao.gwtgithub.client.models.Issue
+import com.github.nyao.gwtgithub.client.models.Repository
+import com.google.gwt.core.client.EntryPoint
+import com.google.gwt.core.client.JsArray
 
 import static com.google.gwt.query.client.GQuery.*
-import static nyao.util.XtendFunction.*
 import static nyao.util.SimpleAsyncCallback.*
+import static nyao.util.XtendFunction.*
 
+import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
 
 class BoostGitHub implements EntryPoint {
@@ -20,7 +21,7 @@ class BoostGitHub implements EntryPoint {
     override onModuleLoad() {
         $("#LoginSubmit").click(clickEvent[
             $("#Authorization").fadeOut(1000)
-            val user = $("#Login").value
+            val user = $("#Login").gqVal
             $(".username").text(user)
             $("#Repositories").fadeIn(1000)
             api.getRepositories(user, callback[showRepositories(it.data, "Repos")])
@@ -31,7 +32,7 @@ class BoostGitHub implements EntryPoint {
         $("#TokenSubmit").click(clickEvent[
             $("#Authorization").fadeOut(1000)
             $("#Repositories").fadeIn(1000)
-            api.setAuthorization($("#Token").value)
+            api.setAuthorization($("#Token").gqVal)
             api.getUser(callback[$(".username").text(it.login)])
             api.getMyRepository(callback[showRepositories(it.data, "Repos")])
             api.getOrganizations(callback[showOrgs(it)])
@@ -105,10 +106,12 @@ class BoostGitHub implements EntryPoint {
                 .append($("<a>").attr("href", "#").text(r.name)))
         
         issues.map([it.milestone]).filterNull.forEach([
-            if ($("#Issues ." + it.title).isEmpty) $("#Issues .milestones").append(aMilestone(it.title))
+            if ($("#Issues ." + it.title).isEmpty) {
+                $("#Issues .milestones").append(aMilestone(it.title))
+            }
         ])
         
-        issues.<Issue>each([i|
+        issues.each([i|
             val ms = if (i.milestone == null) "Backlog" else i.milestone.title
             $("#Issues ." + ms + " tbody").append(aIssue(i))
         ])
