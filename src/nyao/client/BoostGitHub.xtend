@@ -138,8 +138,8 @@ class BoostGitHub implements EntryPoint {
                     it.data.each([
                         panel.append($("<div>").addClass("comment")
                              .append($("<img>").attr("src", it.user.avatarUrl)
-                                               .attr("height", "48")
-                                               .attr("width", "48"))
+                                               .attr("height", "48px")
+                                               .attr("width", "48px"))
                              .append($("<pre>").text(it.body)))
                     ])
                 ])
