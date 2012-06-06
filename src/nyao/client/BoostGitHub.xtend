@@ -15,6 +15,7 @@ import static nyao.util.XtendFunction.*
 
 import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
+import com.github.nyao.gwtgithub.client.models.Milestone
 
 class BoostGitHub implements EntryPoint {
     val api = new GitHubApi();
@@ -96,10 +97,16 @@ class BoostGitHub implements EntryPoint {
                 ])
     }
     
-    def void showIssues(Repository r, JsArray<Issue> issues) {
+    def classForMilestone(Milestone m) {
+        if (m == null || m.title.equals("Backlog")) "Backlog"
+        else "milestone-" + m.number
+    }
+    
+    def showIssues(Repository r, JsArray<Issue> issues) {
     	$(".nav .active").remove
         $("#Repositories").fadeOut(1000)
         $("#Issues tbody tr").remove
+        $("#Issues .milestones").children.remove
         
         $("#Issues").fadeIn(1000)
         $(".nav")
@@ -107,13 +114,13 @@ class BoostGitHub implements EntryPoint {
                 .append($("<a>").attr("href", "#").text(r.name)))
         
         issues.map([it.milestone]).filterNull.forEach([
-            if ($("#Issues ." + it.title).isEmpty) {
-                $("#Issues .milestones").append(aMilestone(it.title))
+            if ($("#Issues ." + classForMilestone(it)).isEmpty) {
+                $("#Issues .milestones").append(aMilestone(it))
             }
         ])
         
         issues.each([i|
-            val ms = if (i.milestone == null) "Backlog" else i.milestone.title
+            val ms = classForMilestone(i.milestone)
             val aIssue = aIssue(i)
             val aDetail = aIssueDetail(i).hide
             aIssue.click(showIssueDetail(aDetail, i, r))
@@ -163,9 +170,9 @@ class BoostGitHub implements EntryPoint {
         $("<tr>")
     }
     
-    def aMilestone(String title) {
-        $("<div>").addClass(title)
-            .append($("<h2>").text(title))
+    def aMilestone(Milestone m) {
+        $("<div>").addClass(classForMilestone(m))
+            .append($("<h2>").text(m.title))
             .append($("<table>").addClass("table table-bordered table-striped")
                 .append($("<tbody>")))
     }
