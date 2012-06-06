@@ -120,12 +120,7 @@ class BoostGitHub implements EntryPoint {
         ])
         
         issues.each([i|
-            val ms = classForMilestone(i.milestone)
-            val aIssue = aIssue(i)
-            val aDetail = aIssueDetail(i).hide
-            aIssue.click(showIssueDetail(aDetail, i, r))
-            $("#Issues ." + ms + " tbody").append(aIssue)
-            $("#Issues ." + ms + " tbody").append(aDetail)
+            $("#Issues ." + classForMilestone(i.milestone) + " tbody").append(aIssue(i, r))
         ])
     }
     
@@ -149,7 +144,7 @@ class BoostGitHub implements EntryPoint {
         ]
     }
     
-    def aIssue(Issue issue) {
+    def aIssue(Issue issue, Repository r) {
         val result = $("<tr>")
             .append($("<td>").addClass("span1")
                 .append($("<a>").attr("href",   issue.htmlUrl)
@@ -171,6 +166,10 @@ class BoostGitHub implements EntryPoint {
                                    .css("background-color", "#" + it.color)
                                    .text(it.name))
         ])
+        
+        val aDetail = aIssueDetail(issue).hide
+        result.click(showIssueDetail(aDetail, issue, r))
+        issueItem.append(aDetail)
         result
     }
     
