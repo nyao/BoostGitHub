@@ -65,12 +65,12 @@ class BoostGitHub implements EntryPoint {
     }
     
     def showRepositories(JsArray<Repository> rs, String kind) {
-        $(".nav ." + kind).remove
-        $(".nav").append(aDropdownMenu(kind))
+        $(".navbar .nav ." + kind).remove
+        $(".navbar .nav").append(aDropdownMenu(kind))
         
         $("#Repositories ." + kind + " tbody tr").remove
         rs.each([r|
-            $(".nav ." + kind + " ul")
+            $(".navbar .nav ." + kind + " ul")
                 .append($("<li>").append(aOpenIssues(r)))
             $("#Repositories ." + kind + " tbody")
                 .append($("<tr>")
@@ -104,12 +104,12 @@ class BoostGitHub implements EntryPoint {
     }
     
     def showIssues(Repository r, JsArray<Issue> issues) {
-    	$(".nav .active").remove
+    	$(".navbar .nav .active").remove
         $("#Issues tbody tr").remove
         $("#Issues .milestones").children.remove
         
         $("#Issues").fadeIn(1000)
-        $(".nav")
+        $(".navbar .nav")
             .append($("<li>").addClass("active")
                 .append($("<a>").attr("href", "#").text(r.name)))
         
