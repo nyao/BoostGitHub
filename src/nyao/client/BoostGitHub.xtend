@@ -164,6 +164,8 @@ class BoostGitHub implements EntryPoint {
     def aIssueDetail(Issue issue) {
         $("<tr>")
             .append($("<td colspan='2'>")
+                .append($("<div>").addClass("detail")
+                    .append($("<pre>").text(issue.body)))
                 .append($("<div>").addClass("comments")
                                   .css("max-height", "250px")
                                   .css("overflow", "auto")))
