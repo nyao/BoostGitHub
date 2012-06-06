@@ -11,4 +11,8 @@ public final class ConversionJavaToXtend {
     public static String gqVal(GQuery src) {
         return src.val();
     }
+
+    public static void gqVal(GQuery src, String name) {
+        src.val(name);
+    }
 }
