@@ -132,21 +132,16 @@ class BoostGitHub implements EntryPoint {
     def showIssueDetail(GQuery detail, Issue i, Repository r) {
         clickEvent[
             if (!detail.isVisible) {
-                val panel = $("<td colspan='2'>")
                 api.getComment(r, i, callback[
-                    detail.children.remove
-                    val cs = $("<div>").addClass("comments")
-                                       .css("max-height", "250px")
-                                       .css("overflow", "auto")
+                    val panel = detail.find(".comments")
+                    panel.children.remove
                     it.data.each([
-                        cs.append($("<div>").addClass("comment")
-                            .append($("<img>").attr("src", it.user.avatarUrl)
-                                              .attr("height", "48")
-                                              .attr("width", "48"))
-                            .append($("<pre>").text(it.body)))
+                        panel.append($("<div>").addClass("comment")
+                             .append($("<img>").attr("src", it.user.avatarUrl)
+                                               .attr("height", "48")
+                                               .attr("width", "48"))
+                             .append($("<pre>").text(it.body)))
                     ])
-                    panel.append(cs)
-                    detail.append(panel)
                 ])
             }
             detail.fadeToggle(1000)
@@ -168,6 +163,10 @@ class BoostGitHub implements EntryPoint {
     
     def aIssueDetail(Issue issue) {
         $("<tr>")
+            .append($("<td colspan='2'>")
+                .append($("<div>").addClass("comments")
+                                  .css("max-height", "250px")
+                                  .css("overflow", "auto")))
     }
     
     def aMilestone(Milestone m) {
