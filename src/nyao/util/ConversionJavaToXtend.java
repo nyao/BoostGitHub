@@ -15,4 +15,8 @@ public final class ConversionJavaToXtend {
     public static void gqVal(GQuery src, String name) {
         src.val(name);
     }
+    
+    public native static void callTableDnD(String src) /*-{
+        $wnd.jQuery(src).tableDnD();
+    }-*/;
 }

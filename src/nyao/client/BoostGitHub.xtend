@@ -115,13 +115,16 @@ class BoostGitHub implements EntryPoint {
         
         issues.map([it.milestone]).filterNull.forEach([
             if ($("#Issues ." + classForMilestone(it)).isEmpty) {
-                $("#Issues .milestones").append(aMilestone(it))
+                val m = aMilestone(it)
+                $("#Issues .milestones").append(m)
             }
         ])
         
         issues.each([i|
             $("#Issues ." + classForMilestone(i.milestone) + " tbody").append(aIssue(i, r))
         ])
+        
+        "#Issues table".callTableDnD // drag and drop
     }
     
     def showIssueDetail(GQuery detail, Issue i, Repository r) {
