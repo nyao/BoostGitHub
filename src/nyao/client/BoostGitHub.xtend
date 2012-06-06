@@ -150,15 +150,28 @@ class BoostGitHub implements EntryPoint {
     }
     
     def aIssue(Issue issue) {
-        $("<tr>")
+        val result = $("<tr>")
             .append($("<td>").addClass("span1")
                 .append($("<a>").attr("href",   issue.htmlUrl)
                                 .attr("target", "_blank")
                                 .text("#" + String::valueOf(issue.number))))
-            .append($("<td>").text(issue.title)
-                .append($("<img>").attr("src", issue.user.avatarUrl)
-                                  .attr("height", "18")
-                                  .attr("width", "18")))
+            .append($("<td>").addClass("issue-item"))
+        val issueItem = result.find(".issue-item")
+        
+        issueItem.append($("<img>").attr("src", issue.user.avatarUrl)
+                                   .attr("height", "18px")
+                                   .attr("width", "18px"))
+        
+        issueItem.append($("<span>").text(issue.title)
+                                    .css("padding", "5px"))
+        
+        issue.labels.each([
+            issueItem
+                .append($("<span>").addClass("label")
+                                   .css("background-color", "#" + it.color)
+                                   .text(it.name))
+        ])
+        result
     }
     
     def aIssueDetail(Issue issue) {
