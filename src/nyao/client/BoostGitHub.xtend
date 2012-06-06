@@ -92,6 +92,7 @@ class BoostGitHub implements EntryPoint {
         $("<a>").text(r.name + "(" + String::valueOf(r.openIssues) + ")")
                 .attr("href", "#")
                 .click(clickEvent [
+                    $("#Repositories").fadeOut(1000)
                     api.getIssues(r, callback[showIssues(r, it.data)])
                     true
                 ])
@@ -104,7 +105,6 @@ class BoostGitHub implements EntryPoint {
     
     def showIssues(Repository r, JsArray<Issue> issues) {
     	$(".nav .active").remove
-        $("#Repositories").fadeOut(1000)
         $("#Issues tbody tr").remove
         $("#Issues .milestones").children.remove
         
