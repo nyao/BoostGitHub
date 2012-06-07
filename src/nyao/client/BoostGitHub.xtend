@@ -35,7 +35,7 @@ class BoostGitHub implements EntryPoint {
             $("#Authorization").fadeOut(1000)
             $("#Repositories").fadeIn(1000)
             api.setAuthorization($("#Token").gqVal)
-            api.getUser(callback[$(".username").text(it.login)])
+            api.getUser(callback[$(".username").text(it.data.login)])
             api.getMyRepository(callback[showRepositories(it.data, "Repos")])
             api.getOrganizations(callback[showOrgs(it)])
             true
