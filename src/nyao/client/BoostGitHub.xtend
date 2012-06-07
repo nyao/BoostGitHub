@@ -8,6 +8,7 @@ import com.github.nyao.gwtgithub.client.models.Repository
 import com.google.gwt.core.client.EntryPoint
 import com.google.gwt.core.client.JsArray
 import com.google.gwt.query.client.GQuery
+import com.github.nyao.gwtgithub.client.models.Milestone
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.SimpleAsyncCallback.*
@@ -15,7 +16,7 @@ import static nyao.util.XtendFunction.*
 
 import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
-import com.github.nyao.gwtgithub.client.models.Milestone
+import com.github.nyao.gwtgithub.client.models.Comment
 
 class BoostGitHub implements EntryPoint {
     val api = new GitHubApi();
@@ -133,18 +134,39 @@ class BoostGitHub implements EntryPoint {
                 api.getComments(r, i, callback[
                     val panel = detail.find(".comments")
                     panel.children.remove
-                    it.data.each([
-                        panel.append($("<div>").addClass("comment")
-                             .append($("<img>").attr("src", it.user.avatarUrl)
-                                               .attr("height", "48px")
-                                               .attr("width", "48px"))
-                             .append($("<pre>").text(it.body)))
-                    ])
+                    it.data.each([panel.append(aComment(it))])
+                    panel.append(createComment(i, r))
                 ])
             }
             detail.fadeToggle(1000)
             true
         ]
+    }
+    
+    def aComment(Comment c) {
+        $("<div>").addClass("comment")
+            .append($("<img>").attr("src", c.user.avatarUrl)
+                              .attr("height", "48px")
+                              .attr("width", "48px"))
+            .append($("<pre>").text(c.body))
+    }
+    
+    def createComment(Issue i, Repository r) {
+        val result = $("<div>").addClass("add-comment")
+              .append($("<textarea>").addClass("input-xlarge")
+                                     .attr("rows", "4")
+                                     .click(clickEvent[false]))
+              .append($("<a>").addClass("btn submit")
+                              .text("add comment"))
+        
+        result.find(".submit").click(clickEvent[
+                                  api.createComment(r, i, result.find("textarea").gqVal, callback([
+                                      aComment(it).insertBefore(result)
+                                      result.find("textarea").gqVal("")
+                                  ]))
+                                  false
+                              ])
+        result
     }
     
     def aIssue(Issue issue, Repository r) {
