@@ -16,6 +16,7 @@ import static nyao.util.XtendFunction.*
 
 import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
+import static extension nyao.util.XtendGitHubAPI.*
 import com.github.nyao.gwtgithub.client.models.Comment
 
 class BoostGitHub implements EntryPoint {
@@ -137,6 +138,11 @@ class BoostGitHub implements EntryPoint {
                     it.data.each([panel.append(aComment(it))])
                     panel.append(createComment(i, r))
                 ])
+                i.elm.find(".open-detail").children.remove
+                i.elm.find(".open-detail").append($("<i>").addClass("icon-chevron-up"))
+            } else {
+                i.elm.find(".open-detail").children.remove
+                i.elm.find(".open-detail").append($("<i>").addClass("icon-chevron-down"))
             }
             detail.fadeToggle(1000)
             true
@@ -170,12 +176,15 @@ class BoostGitHub implements EntryPoint {
     }
     
     def aIssue(Issue issue, Repository r) {
-        val result = $("<tr>")
+        val result = $("<tr>").id("issue-" + issue.number)
             .append($("<td>").addClass("span1")
                 .append($("<a>").attr("href",   issue.htmlUrl)
                                 .attr("target", "_blank")
                                 .text("#" + String::valueOf(issue.number))))
             .append($("<td>").addClass("issue-item"))
+            .append($("<td>").addClass("open-detail").css("align", "right").css("cursor", "pointer")
+                .append($("<i>").addClass("icon-chevron-down")))
+        
         val issueItem = result.find(".issue-item")
         
         issueItem.append($("<img>").attr("src", issue.user.avatarUrl)
@@ -193,7 +202,7 @@ class BoostGitHub implements EntryPoint {
         ])
         
         val aDetail = aIssueDetail(issue).hide
-        result.click(showIssueDetail(aDetail, issue, r))
+        result.find(".open-detail").click(showIssueDetail(aDetail, issue, r))
         issueItem.append(aDetail)
         result
     }
