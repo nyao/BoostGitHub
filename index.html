@@ -13,6 +13,7 @@
     </style>
     <link href="./assets/css/bootstrap-responsive.css" rel="stylesheet">
     <script type="text/javascript" language="javascript" src="./assets/js/jquery.js"></script>
+    <script type="text/javascript" language="javascript" src="./assets/js/jquery.tablednd.js"></script>
     <script type="text/javascript" language="javascript" src="./assets/js/bootstrap.js"></script>
   </head>
 
@@ -50,7 +51,7 @@
                     <p>or</p>
                     <input id="Token" type="text" class="span4" placeholder="Token">
                     <button id="TokenSubmit" class="btn">Submit</button>
-                    <a href="http://auth.boostgithub.appspot.com/auth" target="_blank">auth</a>
+                    <a href="https://boostgithub.appspot.com/auth" target="_blank">auth</a>
                 </div>
             </div>
         </div>
@@ -70,10 +71,15 @@
         </div>
         
         <div class="row" id="Issues">
+            <div class="span12">
+                <ul class="nav nav-pills">
+                    <li><a class="btn new-issue" href="#"><i class="icon-plus"></i>New Issue</a></li>
+                </ul>
+            </div>
             <div class="span6">
                 <div class="Backlog">
                    <h2>Backlog</h2>
-                   <table class="table table-bordered table-striped">
+                   <table class="table draggable table-bordered table-striped">
                        <tbody>
                        </tbody>
                    </table>
