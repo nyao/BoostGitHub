@@ -130,7 +130,7 @@ class BoostGitHub implements EntryPoint {
     def showIssueDetail(GQuery detail, Issue i, Repository r) {
         clickEvent[
             if (!detail.isVisible) {
-                api.getComment(r, i, callback[
+                api.getComments(r, i, callback[
                     val panel = detail.find(".comments")
                     panel.children.remove
                     it.data.each([
