@@ -50,7 +50,8 @@ class BoostGitHub implements EntryPoint {
     def showOrgs(Users orgs) {
         $("#Repositories .Orgs table").remove
         orgs.data.each[org|
-            api.getRepositories(org.login, callback[showOrgRepositories(org, it.data)])
+            api.getRepositories(org.login, 
+                                callback[showOrgRepositories(org, it.data)])
         ]
     }
     
