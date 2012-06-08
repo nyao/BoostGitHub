@@ -7,7 +7,6 @@ import com.github.nyao.gwtgithub.client.models.Issue
 import com.github.nyao.gwtgithub.client.models.Repository
 import com.google.gwt.core.client.EntryPoint
 import com.google.gwt.core.client.JsArray
-import com.google.gwt.query.client.GQuery
 import com.github.nyao.gwtgithub.client.models.Milestone
 
 import static com.google.gwt.query.client.GQuery.*
@@ -16,8 +15,7 @@ import static nyao.util.XtendFunction.*
 
 import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
-import static extension nyao.util.XtendGitHubAPI.*
-import com.github.nyao.gwtgithub.client.models.Comment
+import nyao.client.ui.IssueUI
 
 class BoostGitHub implements EntryPoint {
     val api = new GitHubApi();
@@ -123,98 +121,11 @@ class BoostGitHub implements EntryPoint {
         ])
         
         issues.each([i|
-            $("#Issues ." + classForMilestone(i.milestone) + " tbody").append(aIssue(i, r))
+            $("#Issues ." + classForMilestone(i.milestone) + " tbody").append(new IssueUI(i, r, api).elm)
         ])
         
         "#Issues table".callTableDnD // drag and drop
-    }
-    
-    def showIssueDetail(GQuery detail, Issue i, Repository r) {
-        clickEvent[
-            if (!detail.isVisible) {
-                api.getComments(r, i, callback[
-                    val panel = detail.find(".comments")
-                    panel.children.remove
-                    it.data.each([panel.append(aComment(it))])
-                    panel.append(createComment(i, r))
-                ])
-                i.elm.find(".open-detail").children.remove
-                i.elm.find(".open-detail").append($("<i>").addClass("icon-chevron-up"))
-            } else {
-                i.elm.find(".open-detail").children.remove
-                i.elm.find(".open-detail").append($("<i>").addClass("icon-chevron-down"))
-            }
-            detail.fadeToggle(1000)
-            true
-        ]
-    }
-    
-    def aComment(Comment c) {
-        $("<div>").addClass("comment")
-            .append($("<img>").attr("src", c.user.avatarUrl)
-                              .attr("height", "48px")
-                              .attr("width", "48px"))
-            .append($("<pre>").text(c.body))
-    }
-    
-    def createComment(Issue i, Repository r) {
-        val result = $("<div>").addClass("add-comment")
-              .append($("<textarea>").addClass("input-xlarge")
-                                     .attr("rows", "4")
-                                     .click(clickEvent[false]))
-              .append($("<a>").addClass("btn submit")
-                              .text("add comment"))
         
-        result.find(".submit").click(clickEvent[
-                                  api.createComment(r, i, result.find("textarea").gqVal, callback([
-                                      aComment(it).insertBefore(result)
-                                      result.find("textarea").gqVal("")
-                                  ]))
-                                  false
-                              ])
-        result
-    }
-    
-    def aIssue(Issue issue, Repository r) {
-        val result = $("<tr>").id("issue-" + issue.number)
-            .append($("<td>").addClass("span1")
-                .append($("<a>").attr("href",   issue.htmlUrl)
-                                .attr("target", "_blank")
-                                .text("#" + String::valueOf(issue.number))))
-            .append($("<td>").addClass("issue-item"))
-            .append($("<td>").addClass("open-detail").css("align", "right").css("cursor", "pointer")
-                .append($("<i>").addClass("icon-chevron-down")))
-        
-        val issueItem = result.find(".issue-item")
-        
-        issueItem.append($("<img>").attr("src", issue.user.avatarUrl)
-                                   .attr("height", "18px")
-                                   .attr("width", "18px"))
-        
-        issueItem.append($("<span>").text(issue.title)
-                                    .css("padding", "5px"))
-        
-        issue.labels.each([
-            issueItem
-                .append($("<span>").addClass("label")
-                                   .css("background-color", "#" + it.color)
-                                   .text(it.name))
-        ])
-        
-        val aDetail = aIssueDetail(issue).hide
-        result.find(".open-detail").click(showIssueDetail(aDetail, issue, r))
-        issueItem.append(aDetail)
-        result
-    }
-    
-    def aIssueDetail(Issue issue) {
-        $("<tr>")
-            .append($("<td colspan='2'>")
-                .append($("<div>").addClass("detail")
-                    .append($("<pre>").text(issue.body)))
-                .append($("<div>").addClass("comments")
-                                  .css("max-height", "250px")
-                                  .css("overflow", "auto")))
     }
     
     def aMilestone(Milestone m) {
