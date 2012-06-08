@@ -66,26 +66,22 @@ class BoostGitHub implements EntryPoint {
     
     def showRepositories(JsArray<Repository> rs, String kind) {
         $(".navbar .nav ." + kind).remove
-        $(".navbar .nav").append(aDropdownMenu(kind))
+        $(".navbar .nav").append(aDropdownMenu(rs, kind))
         
         $("#Repositories ." + kind + " tbody tr").remove
-        rs.each([r|
-            $(".navbar .nav ." + kind + " ul")
-                .append($("<li>").append(aOpenIssues(r)))
-            $("#Repositories ." + kind + " tbody")
-                .append($("<tr>")
-                    .append($("<td>").append(aOpenIssues(r))))
-        ])
+        $("#Repositories ." + kind + " tbody")
+            .append(rs, [$("<tr>").append($("<td>").append(aOpenIssues(it)))])
     }
     
-    def aDropdownMenu(String kind) {
+    def aDropdownMenu(JsArray<Repository> rs, String kind) {
         $("<li>").addClass("dropdown " + kind)
             .append($("<a>").addClass("dropdown-toggle")
                             .attr("data-toggle", "dropdown")
                             .attr("href", "#")
                             .text(kind)
                             .append($("<b>").addClass("caret")))
-            .append($("<ul>").addClass("dropdown-menu " + kind))
+            .append($("<ul>").addClass("dropdown-menu " + kind)
+                .append(rs, [$("<li>").append(aOpenIssues(it))]))
     }
     
     def aOpenIssues(Repository r) {
@@ -115,8 +111,7 @@ class BoostGitHub implements EntryPoint {
         
         issues.map([it.milestone]).filterNull.forEach([
             if ($("#Issues ." + classForMilestone(it)).isEmpty) {
-                val m = aMilestone(it)
-                $("#Issues .milestones").append(m)
+                $("#Issues .milestones").append(aMilestone(it))
             }
         ])
         
