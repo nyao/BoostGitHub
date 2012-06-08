@@ -13,8 +13,10 @@ import static nyao.util.XtendFunction.*
 
 import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
+import static extension nyao.util.XtendGitHubAPI.*
 import com.github.nyao.gwtgithub.client.models.Milestone
 import com.google.gwt.core.client.JsArray
+import java.util.HashMap
 
 class IssueUI {
     val Issue issue
@@ -64,13 +66,36 @@ class IssueUI {
     }
     
     def makeDeliver(JsArray<Milestone> mss) {
+        val p =
         $("<span>").css("float", "right").addClass("btn-group ready")
             .append($("<a>").addClass("btn btn-mini dropdown-toggle")
                             .attr("data-toggle", "dropdown")
                             .attr("href", "#")
                             .text("ready"))
             .append($("<ul>").addClass("dropdown-menu")
-                .append(mss, [$("<li>").append($("<a>").attr("href", "#").text(it.title))]))
+                .append(mss.filter([issue.milestone?.number != it.number]), [ms|
+                    $("<li>")
+                        .append($("<a>").attr("href", "#").text(ms.title)
+                        .click(clickDeliver(ms))
+                    )
+                ]))
+        
+        if (issue.milestone != null) {
+            p.find(".dropdown-menu")
+                .append($("<li>").append($("<a>").attr("href", "#").text("Backlog")))
+        }
+        p
+    }
+    
+    def clickDeliver(Milestone ms) {
+        clickEvent[
+            val prop = new HashMap<Issue$Prop, Object>
+            prop.put(Issue$Prop::milestone, ms.number)
+            api.editIssue(repository, issue, prop, callback[
+                $("#Issues ." + ms.cssClass + " tbody").append(elm)
+            ])
+            true
+        ]
     }
     
     def makeDetail() {
