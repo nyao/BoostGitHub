@@ -30,6 +30,11 @@ class XtendGQuery {
         gq
     }
     
+    def static <T extends JavaScriptObject> append(GQuery gq, Iterable<T> items, (T) => GQuery f) {
+        items.forEach([gq.append(f.apply(it))])
+        gq
+    }
+    
     def static <T extends JavaScriptObject> List<T> filter(JsArray<T> items, (T) => Boolean f) {
         val result = new ArrayList<T>()
         items.each([
