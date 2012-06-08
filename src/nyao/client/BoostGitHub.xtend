@@ -22,9 +22,9 @@ class BoostGitHub implements EntryPoint {
     
     override onModuleLoad() {
         $("#LoginSubmit").click(clickEvent[
-            $("#Authorization").fadeOut(1000)
+            $("#Auth").fadeOut(1000)
             val user = $("#Login").gqVal
-            $(".username").text(user)
+            $(".navbar .username").text(user)
             $("#Repositories").fadeIn(1000)
             api.getRepositories(user, callback[showRepositories(it.data, "Repos")])
             api.getOrganizations(user, callback[showOrgs(it)])
@@ -32,10 +32,10 @@ class BoostGitHub implements EntryPoint {
         ])
         
         $("#TokenSubmit").click(clickEvent[
-            $("#Authorization").fadeOut(1000)
+            $("#Auth").fadeOut(1000)
             $("#Repositories").fadeIn(1000)
             api.setAuthorization($("#Token").gqVal)
-            api.getUser(callback[$(".username").text(it.data.login)])
+            api.getUser(callback[$(".navbar .username").text(it.data.login)])
             api.getMyRepository(callback[showRepositories(it.data, "Repos")])
             api.getOrganizations(callback[showOrgs(it)])
             true
@@ -43,8 +43,8 @@ class BoostGitHub implements EntryPoint {
         
         $("#Repositories").hide
         $("#Issues").hide
-        $("#Authorization .close").click(clickEvent[$("#Authorization").fadeOut(1000);true])
-        $("#User").click(clickEvent[$("#Authorization").fadeIn(1000);true])
+        $("#Auth .close").click(clickEvent[$("#Auth").fadeOut(1000);true])
+        $("#User").click(clickEvent[$("#Auth").fadeIn(1000);true])
     }
     
     def showOrgs(Users orgs) {
