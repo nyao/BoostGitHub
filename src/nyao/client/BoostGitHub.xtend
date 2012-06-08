@@ -129,18 +129,20 @@ class BoostGitHub implements EntryPoint {
         $("#Issues .milestones").children.remove
         $("#Issues").fadeIn(1000)
         
-        issues.map([it.milestone]).filterNull.forEach([
-            if ($("#Issues ." + classForMilestone(it)).isEmpty) {
-                $("#Issues .milestones").append(aMilestone(it))
-            }
-        ])
+        api.getMilestones(r, callback[
+            it.data.each([
+                if ($("#Issues ." + classForMilestone(it)).isEmpty) {
+                    $("#Issues .milestones").append(aMilestone(it))
+                }
+            ])
+            
+            issues.each([i|
+                $("#Issues ." + classForMilestone(i.milestone) + " tbody")
+                    .append(new IssueUI(i, r, it.data, api).elm)
+            ])
         
-        issues.each([i|
-            $("#Issues ." + classForMilestone(i.milestone) + " tbody")
-                .append(new IssueUI(i, r, api).elm)
-        ])
-        
-        "#Issues table".callTableDnD // drag and drop
+            "#Issues table".callTableDnD // drag and drop
+        ]) 
     }
     
     def aMilestone(Milestone m) {

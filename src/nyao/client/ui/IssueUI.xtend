@@ -13,6 +13,8 @@ import static nyao.util.XtendFunction.*
 
 import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
+import com.github.nyao.gwtgithub.client.models.Milestone
+import com.google.gwt.core.client.JsArray
 
 class IssueUI {
     val Issue issue
@@ -20,7 +22,7 @@ class IssueUI {
     val GitHubApi api
     @Property GQuery elm
     
-    new(Issue issue, Repository repository, GitHubApi api) {
+    new(Issue issue, Repository repository, JsArray<Milestone> mss, GitHubApi api) {
         this.issue = issue
         this.repository = repository
         this.api = api
@@ -35,6 +37,7 @@ class IssueUI {
                 .append(makeAvatar)
                 .append(makeTitle)
                 .append(issue.labels, [makeLabel(it)])
+                .append(makeDeliver(mss))
                 .append(makeDetail.hide))
             .append($("<td>").addClass("open-detail")
                              .css("align", "right")
@@ -58,6 +61,16 @@ class IssueUI {
         $("<span>").addClass("label")
                    .css("background-color", "#" + l.color)
                    .text(l.name)
+    }
+    
+    def makeDeliver(JsArray<Milestone> mss) {
+        $("<span>").css("float", "right").addClass("btn-group ready")
+            .append($("<a>").addClass("btn btn-mini dropdown-toggle")
+                            .attr("data-toggle", "dropdown")
+                            .attr("href", "#")
+                            .text("ready"))
+            .append($("<ul>").addClass("dropdown-menu")
+                .append(mss, [$("<li>").append($("<a>").attr("href", "#").text(it.title))]))
     }
     
     def makeDetail() {
