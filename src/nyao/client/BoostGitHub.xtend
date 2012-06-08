@@ -8,6 +8,7 @@ import com.github.nyao.gwtgithub.client.models.Repository
 import com.google.gwt.core.client.EntryPoint
 import com.google.gwt.core.client.JsArray
 import com.github.nyao.gwtgithub.client.models.Milestone
+import nyao.client.ui.IssueUI
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.SimpleAsyncCallback.*
@@ -15,7 +16,7 @@ import static nyao.util.XtendFunction.*
 
 import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
-import nyao.client.ui.IssueUI
+import static extension nyao.util.XtendGitHubAPI.*
 
 class BoostGitHub implements EntryPoint {
     val api = new GitHubApi();
@@ -111,11 +112,6 @@ class BoostGitHub implements EntryPoint {
         ]
     }
     
-    def classForMilestone(Milestone m) {
-        if (m == null || m.title.equals("Backlog")) "Backlog"
-        else "milestone-" + m.number
-    }
-    
     def activeRepositoryName(Repository r) {
         $("<li>").addClass("active")
                 .append($("<a>").attr("href", "#").text(r.name))
@@ -131,13 +127,13 @@ class BoostGitHub implements EntryPoint {
         
         api.getMilestones(r, callback[
             it.data.each([
-                if ($("#Issues ." + classForMilestone(it)).isEmpty) {
+                if ($("#Issues ." + it.cssClass).isEmpty) {
                     $("#Issues .milestones").append(aMilestone(it))
                 }
             ])
             
             issues.each([i|
-                $("#Issues ." + classForMilestone(i.milestone) + " tbody")
+                $("#Issues ." + i.milestone.cssClass + " tbody")
                     .append(new IssueUI(i, r, it.data, api).elm)
             ])
         
@@ -146,7 +142,7 @@ class BoostGitHub implements EntryPoint {
     }
     
     def aMilestone(Milestone m) {
-        $("<div>").addClass(classForMilestone(m))
+        $("<div>").addClass(m.cssClass)
             .append($("<h2>").text(m.title))
             .append($("<table>").addClass("table table-bordered table-striped")
                 .append($("<tbody>")))
