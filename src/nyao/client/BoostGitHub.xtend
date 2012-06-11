@@ -125,16 +125,16 @@ class BoostGitHub implements EntryPoint {
         $("#Issues .milestones").children.remove
         $("#Issues").fadeIn(1000)
         
-        api.getMilestones(r, callback[
-            it.data.each([
-                if ($("#Issues ." + it.cssClass).isEmpty) {
-                    $("#Issues .milestones").append(aMilestone(it))
+        api.getMilestones(r, callback[mss|
+            mss.data.each([ms|
+                if ($("#Issues ." + ms.cssClass).isEmpty) {
+                    $("#Issues .milestones").append(aMilestone(ms))
                 }
             ])
             
             issues.each([i|
                 $("#Issues ." + i.milestone.cssClass + " tbody")
-                    .append(new IssueUI(i, r, it.data, api).elm)
+                    .append(new IssueUI(i, r, mss.data, api).elm)
             ])
         
             "#Issues table".callTableDnD // drag and drop

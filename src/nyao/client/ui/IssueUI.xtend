@@ -6,6 +6,10 @@ import com.github.nyao.gwtgithub.client.models.Repository
 import com.github.nyao.gwtgithub.client.GitHubApi
 import com.github.nyao.gwtgithub.client.models.Comment
 import com.github.nyao.gwtgithub.client.models.Label
+import com.github.nyao.gwtgithub.client.models.Milestone
+import com.google.gwt.core.client.JsArray
+import java.util.HashMap
+import java.util.ArrayList
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.SimpleAsyncCallback.*
@@ -14,19 +18,18 @@ import static nyao.util.XtendFunction.*
 import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
 import static extension nyao.util.XtendGitHubAPI.*
-import com.github.nyao.gwtgithub.client.models.Milestone
-import com.google.gwt.core.client.JsArray
-import java.util.HashMap
 
 class IssueUI {
     val Issue issue
     val Repository repository
+    val JsArray<Milestone> milestones
     val GitHubApi api
     @Property GQuery elm
     
-    new(Issue issue, Repository repository, JsArray<Milestone> mss, GitHubApi api) {
+    new(Issue issue, Repository repository, JsArray<Milestone> milestones, GitHubApi api) {
         this.issue = issue
         this.repository = repository
+        this.milestones = milestones
         this.api = api
         
         elm = 
@@ -39,7 +42,7 @@ class IssueUI {
                 .append(makeAvatar)
                 .append(makeTitle)
                 .append(issue.labels, [makeLabel(it)])
-                .append(makeDeliver(mss))
+                .append(makeReady)
                 .append(makeDetail.hide))
             .append($("<td>").addClass("open-detail")
                              .css("align", "right")
@@ -65,34 +68,42 @@ class IssueUI {
                    .text(l.name)
     }
     
-    def makeDeliver(JsArray<Milestone> mss) {
-        val p =
+    def makeReady() {
         $("<span>").css("float", "right").addClass("btn-group ready")
             .append($("<a>").addClass("btn btn-mini dropdown-toggle")
                             .attr("data-toggle", "dropdown")
                             .attr("href", "#")
                             .text("ready"))
             .append($("<ul>").addClass("dropdown-menu")
-                .append(mss.filter([issue.milestone?.number != it.number]), [ms|
-                    $("<li>")
-                        .append($("<a>").attr("href", "#").text(ms.title)
-                        .click(clickDeliver(ms))
-                    )
-                ]))
-        
-        if (issue.milestone != null) {
-            p.find(".dropdown-menu")
-                .append($("<li>").append($("<a>").attr("href", "#").text("Backlog")))
-        }
-        p
+                .append(appendReadyList))
     }
     
-    def clickDeliver(Milestone ms) {
+    def appendReadyList() {
+        val result = new ArrayList<GQuery>
+        milestones.filter([issue.milestone?.number != it.number]).forEach([ms|
+                    result.add(
+                    $("<li>")
+                        .append($("<a>").attr("href", "#").text(ms.title)
+                        .click(clickReady(ms.number, ms.cssClass))
+                    ))
+                ])
+        if (issue.milestone != null) {
+            result.add(($("<li>")
+                    .append($("<a>").attr("href", "#")
+                                    .text("Backlog")
+                                    .click(clickReady(null, "Backlog")))))
+        }
+        result
+    }
+    
+    def clickReady(Integer number, String cssClass) {
         clickEvent[
             val prop = new HashMap<Issue$Prop, Object>
-            prop.put(Issue$Prop::milestone, ms.number)
+            prop.put(Issue$Prop::milestone, number)
             api.editIssue(repository, issue, prop, callback[
-                $("#Issues ." + ms.cssClass + " tbody").append(elm)
+                $("#Issues ." + cssClass + " tbody").append(elm)
+                elm.find(".dropdown-menu").children.remove
+                elm.find(".dropdown-menu").append(appendReadyList)
             ])
             true
         ]
