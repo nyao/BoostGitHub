@@ -88,12 +88,15 @@
             </div>
         </div>
         
-        <div class="row" id="Issues">
-            <div class="span12 new-issue">
+        <div class="row">
+            <div class="span6 new-issue">
                 <ul class="nav nav-pills">
                     <li><a id="new-issue-button" class="btn" href="#"><i class="icon-plus"></i>New Issue</a></li>
                 </ul>
                 <table id="new-issue-form">
+                    <thead>
+                        <th>New Issue Form</th>
+                    </thead>
                     <tbody>
                         <tr>
                             <td><input type="text" name="title" class="span5" placeholder="Title"></input></td>
@@ -106,6 +109,65 @@
                     </tbody>
                 </table>
             </div>
+            <div class="span6 new-setting">
+                <ul class="nav nav-pills">
+                    <li>
+                        <div class="btn-group" id="milestones-button">
+                            <a class="btn dropdown-toggle" href="#" data-toggle="dropdown">
+                                <i class="icon-road"></i>Milestones<span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a name="new" href="#">New Milestone</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="btn-group" id="labels-button">
+                            <a class="btn dropdown-toggle" href="#" data-toggle="dropdown">
+                                <i class="icon-road"></i>Labels<span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a name="new" href="#">New Label</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+                <table id="milestone-form">
+                    <thead>
+                        <th>Milestone Form</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" name="title" class="span3" placeholder="Title"></input></td>
+                        </tr><tr>
+                            <td><textarea name="description" class="span4" rows="3" placeholder="Description"></textarea></td>
+                        </tr><tr>
+                            <td><input type="date" name="dueon" placeholder="due on"></input></td>
+                        </tr><tr>
+                            <td><button name="submit" class="btn btn-primary">Submit</button>
+                                <button name="cancel" class="btn">Cancel</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table id="label-form">
+                    <thead>
+                        <th>Label Form</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" name="name"  class="span2" placeholder="Name"></input></td>
+                        </tr><tr>
+                            <td><input type="text" name="color" class="span1" placeholder="Color"></textarea></td>
+                        </tr><tr>
+                            <td><button name="submit" class="btn btn-primary">Submit</button>
+                                <button name="cancel" class="btn">Cancel</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="row" id="Issues">
             <div class="span6">
                 <div class="Backlog">
                    <h2>Backlog</h2>

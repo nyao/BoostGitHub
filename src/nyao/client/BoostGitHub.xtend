@@ -46,6 +46,8 @@ class BoostGitHub implements EntryPoint {
         $("#Repositories").hide
         $("#Issues").hide
         $("#new-issue-form").hide
+        $("#milestone-form").hide
+        $("#label-form").hide
         $("#Auth .close").click(clickEvent[$("#Auth").fadeOut(1000);true])
         $("#User").click(clickEvent[$("#Auth").fadeIn(1000);true])
     }
@@ -158,6 +160,22 @@ class BoostGitHub implements EntryPoint {
                 ])
                 $("#new-issue-form [name='cancel']").click(clickEvent[
                     $("#new-issue-form").fadeOut(1000)
+                    true
+                ])
+                true
+            ])
+            $("#milestones-button [name='new']").click(clickEvent[
+                $("#milestone-form").fadeIn(1000)
+                $("#milestone-form [name='cancel']").click(clickEvent[
+                    $("#milestone-form").fadeOut(1000)
+                    true
+                ])
+                true;
+            ])
+            $("#labels-button [name='new']").click(clickEvent[
+                $("#label-form").fadeIn(1000)
+                $("#label-form [name='cancel']").click(clickEvent[
+                    $("#label-form").fadeOut(1000)
                     true
                 ])
                 true
