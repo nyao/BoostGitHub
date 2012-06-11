@@ -1,15 +1,16 @@
 package nyao.client.ui
 
-import com.github.nyao.gwtgithub.client.models.Issue
-import com.google.gwt.query.client.GQuery
-import com.github.nyao.gwtgithub.client.models.Repository
 import com.github.nyao.gwtgithub.client.GitHubApi
 import com.github.nyao.gwtgithub.client.models.Comment
+import com.github.nyao.gwtgithub.client.models.Issue
 import com.github.nyao.gwtgithub.client.models.Label
 import com.github.nyao.gwtgithub.client.models.Milestone
+import com.github.nyao.gwtgithub.client.models.Repository
+import com.github.nyao.gwtgithub.client.values.IssueForSave
 import com.google.gwt.core.client.JsArray
-import java.util.HashMap
+import com.google.gwt.query.client.GQuery
 import java.util.ArrayList
+import org.eclipse.xtend.lib.Property
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.SimpleAsyncCallback.*
@@ -20,7 +21,7 @@ import static extension nyao.util.XtendGQuery.*
 import static extension nyao.util.XtendGitHubAPI.*
 
 class IssueUI {
-    val Issue issue
+    var Issue issue
     val Repository repository
     val JsArray<Milestone> milestones
     val GitHubApi api
@@ -42,6 +43,8 @@ class IssueUI {
                 .append(makeAvatar)
                 .append(makeTitle)
                 .append(issue.labels, [makeLabel(it)])
+                .append(makeEditButton)
+                .append(makeEdit.hide)
                 .append(makeReady)
                 .append(makeDetail.hide))
             .append($("<td>").addClass("open-detail")
@@ -60,7 +63,8 @@ class IssueUI {
     }
     
     def makeTitle() {
-        $("<span>").text(issue.title)
+        $("<span>").addClass("title")
+                   .text(issue.title)
                    .css("padding", "5px")
     }
     
@@ -68,6 +72,12 @@ class IssueUI {
         $("<span>").addClass("label")
                    .css("background-color", "#" + l.color)
                    .text(l.name)
+    }
+    
+    def makeEditButton() {
+        $("<span>").addClass("btn btn-mini editButton")
+                   .text("Edit")
+                   .click(clickEvent[elm.find(".edit").fadeIn(1000);true])
     }
     
     def makeReady() {
@@ -100,8 +110,7 @@ class IssueUI {
     
     def clickReady(Integer number, String cssClass) {
         clickEvent[
-            val prop = new HashMap<Issue$Prop, Object>
-            prop.put(Issue$Prop::milestone, number)
+            val prop = new IssueForSave => [setMilestone(number)]
             api.editIssue(repository, issue, prop, callback[
                 $("#Issues ." + cssClass + " tbody").append(elm)
                 elm.find(".dropdown-menu").children.remove
@@ -110,6 +119,37 @@ class IssueUI {
             ])
             true
         ]
+    }
+    
+    def makeEdit() {
+        $("<table>").addClass("edit")
+            .append($("<tr>")
+                .append($("<td>")
+                    .append($("<input>").addClass("span5 edit-title").attr("type", "text").gqVal(issue.title)))
+            )
+            .append($("<tr>")
+                .append($("<td>")
+                    .append($("<textarea>").addClass("span5 edit-body").attr("rows", "3").gqVal(issue.body)))
+            )
+            .append($("<tr>")
+                .append($("<button>").addClass("btn").text("submit")
+                    .click(clickEvent[
+                        val prop = new IssueForSave => [
+                            setTitle(elm.find(".edit-title").gqVal)
+                            setBody(elm.find(".edit-body").gqVal)
+                        ]
+                        api.editIssue(repository, issue, prop, callback[
+                            elm.find(".edit").fadeOut(1000)
+                            elm.find(".title").text(it.title)
+                            issue = it
+                        ])
+                        true
+                    ])
+                )
+                .append($("<button>").addClass("btn").text("cancel")
+                    .click(clickEvent[elm.find(".edit").fadeOut(1000);true])
+                )
+            )
     }
     
     def makeDetail() {

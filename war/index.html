@@ -16,6 +16,12 @@
       tr:hover .ready {
         display: inline;
       }
+      .editButton {
+        display: none;
+      }
+      tr:hover .editButton {
+        display: inline;
+      }
     </style>
     <link href="./assets/css/bootstrap-responsive.css" rel="stylesheet">
     <script type="text/javascript" language="javascript" src="./assets/js/jquery.js"></script>
@@ -52,7 +58,7 @@
             <div class="span12">
                  <div class="well form-inline">
                     <button class="close">×</button>
-                    <input id="Login" type="text" class="span2" placeholder="Login">
+                    <input id="Login" type="text" class="span2" placeholder="Login (Read only)">
                     <button id="LoginSubmit" class="btn">Submit</button>
                     <p>or</p>
                     <input id="Token" type="text" class="span4" placeholder="Token">
