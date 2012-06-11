@@ -104,6 +104,7 @@ class IssueUI {
                 $("#Issues ." + cssClass + " tbody").append(elm)
                 elm.find(".dropdown-menu").children.remove
                 elm.find(".dropdown-menu").append(appendReadyList)
+                ("#Issues ." + cssClass + " table").calltableDnDUpdate // drag and drop
             ])
             true
         ]

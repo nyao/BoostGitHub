@@ -19,4 +19,8 @@ public final class ConversionJavaToXtend {
     public native static void callTableDnD(String src) /*-{
         $wnd.jQuery(src).tableDnD();
     }-*/;
+    
+    public native static void calltableDnDUpdate(String src) /*-{
+        $wnd.jQuery(src).tableDnDUpdate();
+    }-*/;
 }
