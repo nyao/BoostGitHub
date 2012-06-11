@@ -17,6 +17,7 @@ import static nyao.util.XtendFunction.*
 import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
 import static extension nyao.util.XtendGitHubAPI.*
+import com.github.nyao.gwtgithub.client.values.IssueForSave
 
 class BoostGitHub implements EntryPoint {
     val api = new GitHubApi();
@@ -44,6 +45,7 @@ class BoostGitHub implements EntryPoint {
         
         $("#Repositories").hide
         $("#Issues").hide
+        $("#new-issue-form").hide
         $("#Auth .close").click(clickEvent[$("#Auth").fadeOut(1000);true])
         $("#User").click(clickEvent[$("#Auth").fadeIn(1000);true])
     }
@@ -121,7 +123,8 @@ class BoostGitHub implements EntryPoint {
     	$(".navbar .nav .active").remove
         $(".navbar .nav").append(activeRepositoryName(r))
         
-        $("#Issues tbody tr").remove
+        $("#Issues Backlog tbody tr").remove
+        $("#Issues .milestones tbody tr").remove
         $("#Issues .milestones").children.remove
         $("#Issues").fadeIn(1000)
         
@@ -138,7 +141,28 @@ class BoostGitHub implements EntryPoint {
             ])
         
             "#Issues table".callTableDnD // drag and drop
-        ]) 
+            
+            $("#new-issue-button").click(clickEvent[
+                $("#new-issue-form").fadeIn(1000)
+                $("#new-issue-form [name='submit']").click(clickEvent[
+                        val prop = new IssueForSave => [
+                            setTitle($("#new-issue-form [name='title']").gqVal)
+                            setBody($("#new-issue-form [name='body']").gqVal)
+                        ]
+                        api.createIssue(r, prop, callback[
+                            $("#new-issue-form").fadeOut(1000)
+                            $("#Issues .Backlog tbody").append(new IssueUI(it, r, mss.data, api).elm)
+                            ("#Issues .Backlog table").calltableDnDUpdate // drag and drop
+                        ])
+                        true
+                ])
+                $("#new-issue-form [name='cancel']").click(clickEvent[
+                    $("#new-issue-form").fadeOut(1000)
+                    true
+                ])
+                true
+            ])
+        ])
     }
     
     def aMilestone(Milestone m) {

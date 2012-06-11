@@ -89,10 +89,22 @@
         </div>
         
         <div class="row" id="Issues">
-            <div class="span12">
+            <div class="span12 new-issue">
                 <ul class="nav nav-pills">
-                    <li><a class="btn" href="#"><i class="icon-plus"></i>New Issue</a></li>
+                    <li><a id="new-issue-button" class="btn" href="#"><i class="icon-plus"></i>New Issue</a></li>
                 </ul>
+                <table id="new-issue-form">
+                    <tbody>
+                        <tr>
+                            <td><input type="text" name="title" class="span5" placeholder="Title"></input></td>
+                        </tr><tr>
+                            <td><textarea name="body" class="span5" rows="3" placeholder="Body"></textarea></td>
+                        </tr><tr>
+                            <td><button name="submit" class="btn btn-primary">Submit</button>
+                                <button name="cancel" class="btn">Cancel</button></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
             <div class="span6">
                 <div class="Backlog">

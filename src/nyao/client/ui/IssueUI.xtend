@@ -44,7 +44,7 @@ class IssueUI {
                 .append(makeTitle)
                 .append(issue.labels, [makeLabel(it)])
                 .append(makeEditButton)
-                .append(makeEdit.hide)
+                .append(makeEditForm.hide)
                 .append(makeReady)
                 .append(makeDetail.hide))
             .append($("<td>").addClass("open-detail")
@@ -121,33 +121,43 @@ class IssueUI {
         ]
     }
     
-    def makeEdit() {
+    def makeEditForm() {
         $("<table>").addClass("edit")
             .append($("<tr>")
                 .append($("<td>")
-                    .append($("<input>").addClass("span5 edit-title").attr("type", "text").gqVal(issue.title)))
+                    .append($("<input>").addClass("span5 edit-title")
+                                        .attr("type", "text")
+                                        .attr("placeholder", "Title")
+                                        .gqVal(issue.title)
+                    ))
             )
             .append($("<tr>")
                 .append($("<td>")
-                    .append($("<textarea>").addClass("span5 edit-body").attr("rows", "3").gqVal(issue.body)))
+                    .append($("<textarea>").addClass("span5 edit-body")
+                                           .attr("rows", "3")
+                                           .attr("placeholder", "Body")
+                                           .gqVal(issue.body)
+                    ))
             )
             .append($("<tr>")
-                .append($("<button>").addClass("btn").text("submit")
-                    .click(clickEvent[
-                        val prop = new IssueForSave => [
-                            setTitle(elm.find(".edit-title").gqVal)
-                            setBody(elm.find(".edit-body").gqVal)
-                        ]
-                        api.editIssue(repository, issue, prop, callback[
-                            elm.find(".edit").fadeOut(1000)
-                            elm.find(".title").text(it.title)
-                            issue = it
+                .append($("<td>")
+                    .append($("<button>").addClass("btn btn-primary").text("submit")
+                        .click(clickEvent[
+                            val prop = new IssueForSave => [
+                                setTitle(elm.find(".edit-title").gqVal)
+                                setBody(elm.find(".edit-body").gqVal)
+                            ]
+                            api.editIssue(repository, issue, prop, callback[
+                                elm.find(".edit").fadeOut(1000)
+                                elm.find(".title").text(it.title)
+                                issue = it
+                            ])
+                            true
                         ])
-                        true
-                    ])
-                )
-                .append($("<button>").addClass("btn").text("cancel")
-                    .click(clickEvent[elm.find(".edit").fadeOut(1000);true])
+                    )
+                    .append($("<button>").addClass("btn").text("cancel")
+                        .click(clickEvent[elm.find(".edit").fadeOut(1000);true])
+                    )
                 )
             )
     }
