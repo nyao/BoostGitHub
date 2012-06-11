@@ -166,7 +166,7 @@ class IssueUI {
         $("<tr>").addClass("detail")
             .append($("<td colspan='2'>")
                 .append($("<div>")
-                    .append($("<pre>").text(issue.body)))
+                    .append($("<pre>")))
                 .append($("<div>").addClass("comments")
                                   .css("max-height", "250px")
                                   .css("overflow", "auto")))
@@ -177,6 +177,7 @@ class IssueUI {
             val dt = $(it.eventTarget)
             val detail = elm.find(".detail")
             if (!detail.isVisible) {
+                detail.find("pre").text(issue.body)
                 api.getComments(repository, issue, callback[
                     val panel = detail.find(".comments")
                     panel.children.remove
