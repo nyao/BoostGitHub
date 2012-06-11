@@ -47,6 +47,8 @@ class IssueUI {
             .append($("<td>").addClass("open-detail")
                              .css("align", "right")
                              .css("cursor", "pointer")
+                             .css("width", "16px")
+                             .css("padding", "8px 12px")
                              .click(showDetail)
                 .append($("<i>").addClass("icon-chevron-down")))
     }
