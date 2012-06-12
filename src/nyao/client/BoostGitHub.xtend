@@ -143,12 +143,14 @@ class BoostGitHub implements EntryPoint {
                     .append(new IssueUI(i, r, mss.data, api).elm)
             ])
             
-            "#Issues table".callTableDnD // drag and drop 
-            
-            $("#new-issue-button").click(newIssueClick(r, mss))
-            $("#setting").fadeIn(1000)
-            $("#milestones-button [name='new']").click(newMilestoneClick)
-            $("#labels-button [name='new']").click(newLabelClick)
+            if (api.authorized) {
+                "#Issues table".callTableDnD // drag and drop 
+                
+                $("#new-issue-button").click(newIssueClick(r, mss))
+                $("#setting").fadeIn(1000)
+                $("#milestones-button [name='new']").click(newMilestoneClick)
+                $("#labels-button [name='new']").click(newLabelClick)
+            }
         ])
     }
     

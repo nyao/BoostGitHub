@@ -44,16 +44,16 @@ class IssueUI {
                 .append(makeAvatar)
                 .append(makeTitle)
                 .append(issue.labels, [makeLabel(it)])
-                .append(makeEditButton)
-                .append(makeEditForm.hide)
-                .append(makeReady)
-                .append(makeDetail.hide))
+                .appendIf(makeEditButton, [|api.authorized])
+                .appendIf(makeEditForm.hide, [|api.authorized])
+                .appendIf(makeReadyButton, [|api.authorized])
+                .append(makeDetailPanel.hide))
             .append($("<td>").addClass("open-detail")
                              .css("align", "right")
                              .css("cursor", "pointer")
                              .css("width", "16px")
                              .css("padding", "8px 12px")
-                             .click(showDetail)
+                             .click(clickDetail)
                 .append($("<i>").addClass("icon-chevron-down")))
     }
     
@@ -81,7 +81,7 @@ class IssueUI {
                    .click(clickEvent[elm.find(".edit").fadeIn(1000);true])
     }
     
-    def makeReady() {
+    def makeReadyButton() {
         $("<span>").css("float", "right").addClass("btn-group ready")
             .append($("<a>").addClass("btn btn-mini dropdown-toggle")
                             .attr("data-toggle", "dropdown")
@@ -163,7 +163,7 @@ class IssueUI {
             )
     }
     
-    def makeDetail() {
+    def makeDetailPanel() {
         $("<tr>").addClass("detail")
             .append($("<td colspan='2'>")
                 .append($("<div>")
@@ -173,7 +173,7 @@ class IssueUI {
                                   .css("overflow", "auto")))
     }
     
-    def showDetail() {
+    def clickDetail() {
         clickEvent[
             val dt = $(it.eventTarget)
             val detail = elm.find(".detail")
@@ -183,7 +183,7 @@ class IssueUI {
                     val panel = detail.find(".comments")
                     panel.children.remove
                     panel.append(it.data, [makeComment(it)])
-                    panel.append(makeCommentAdd)
+                    panel.appendIf(makeCommentAdd, [|api.authorized])
                 ])
                 dt.find("i")
                   .removeClass("icon-chevron-down")

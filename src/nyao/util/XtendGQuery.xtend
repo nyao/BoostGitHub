@@ -40,6 +40,13 @@ class XtendGQuery {
         gq
     }
     
+    def static appendIf(GQuery gq, GQuery item, () => boolean cond) {
+        if (cond.apply) {
+            gq.append(item)
+        }
+        gq
+    }
+    
     def static <T extends JavaScriptObject> List<T> filter(JsArray<T> items, (T) => Boolean f) {
         val result = new ArrayList<T>()
         items.each([
