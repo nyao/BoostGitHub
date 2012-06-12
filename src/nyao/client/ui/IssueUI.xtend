@@ -5,12 +5,13 @@ import com.github.nyao.gwtgithub.client.models.Comment
 import com.github.nyao.gwtgithub.client.models.Issue
 import com.github.nyao.gwtgithub.client.models.Label
 import com.github.nyao.gwtgithub.client.models.Milestone
-import com.github.nyao.gwtgithub.client.models.Repository
 import com.github.nyao.gwtgithub.client.values.IssueForSave
 import com.google.gwt.core.client.JsArray
 import com.google.gwt.query.client.GQuery
 import java.util.ArrayList
 import org.eclipse.xtend.lib.Property
+import com.github.nyao.gwtgithub.client.values.CommentForSave
+import com.github.nyao.gwtgithub.client.models.Repo
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.SimpleAsyncCallback.*
@@ -19,16 +20,15 @@ import static nyao.util.XtendFunction.*
 import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
 import static extension nyao.util.XtendGitHubAPI.*
-import com.github.nyao.gwtgithub.client.values.CommentForSave
 
 class IssueUI {
     var Issue issue
-    val Repository repository
+    val Repo repository
     val JsArray<Milestone> milestones
     val GitHubApi api
     @Property GQuery elm
     
-    new(Issue issue, Repository repository, JsArray<Milestone> milestones, GitHubApi api) {
+    new(Issue issue, Repo repository, JsArray<Milestone> milestones, GitHubApi api) {
         this.issue = issue
         this.repository = repository
         this.milestones = milestones

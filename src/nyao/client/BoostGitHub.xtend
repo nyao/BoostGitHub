@@ -4,13 +4,13 @@ import com.github.nyao.gwtgithub.client.GitHubApi
 import com.github.nyao.gwtgithub.client.api.Users
 import com.github.nyao.gwtgithub.client.models.GHUser
 import com.github.nyao.gwtgithub.client.models.Issue
-import com.github.nyao.gwtgithub.client.models.Repository
 import com.google.gwt.core.client.EntryPoint
 import com.google.gwt.core.client.JsArray
 import com.github.nyao.gwtgithub.client.models.Milestone
 import nyao.client.ui.IssueUI
 import com.github.nyao.gwtgithub.client.values.IssueForSave
 import com.github.nyao.gwtgithub.client.api.Milestones
+import com.github.nyao.gwtgithub.client.models.Repo
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.SimpleAsyncCallback.*
@@ -28,23 +28,23 @@ class BoostGitHub implements EntryPoint {
             $("#Auth").fadeOut(1000)
             val user = $("#Login").gqVal
             $(".navbar .username").text(user)
-            $("#Repositories").fadeIn(1000)
-            api.getRepos(user, callback[showRepositories(it.data, "Repos")])
+            $("#Repos").fadeIn(1000)
+            api.getRepos(user, callback[showRepos(it.getData, "Repos")])
             api.getOrgs(user, callback[showOrgs(it)])
             true
         ])
         
         $("#TokenSubmit").click(clickEvent[
             $("#Auth").fadeOut(1000)
-            $("#Repositories").fadeIn(1000)
+            $("#Repos").fadeIn(1000)
             api.setAccessToken($("#Token").gqVal)
             api.getUser(callback[$(".navbar .username").text(it.data.login)])
-            api.getRepos(callback[showRepositories(it.data, "Repos")])
+            api.getRepos(callback[showRepos(it.getData, "Repos")])
             api.getOrgs(callback[showOrgs(it)])
             true
         ])
         
-        $("#Repositories").hide
+        $("#Repos").hide
         $("#Issues").hide
         $("#setting").hide
         $("#new-issue-form").hide
@@ -55,15 +55,15 @@ class BoostGitHub implements EntryPoint {
     }
     
     def showOrgs(Users orgs) {
-        $("#Repositories .Orgs table").remove
+        $("#Repos .Orgs table").remove
         orgs.data.each[org|
             api.getRepos(org.login, 
-                                callback[showOrgRepositories(org, it.data)])
+                                callback[showOrgRepos(org, it.getData)])
         ]
     }
     
-    def showOrgRepositories(GHUser org, JsArray<Repository> rs) {
-        $("#Repositories .Orgs")
+    def showOrgRepos(GHUser org, JsArray<Repo> rs) {
+        $("#Repos .Orgs")
             .append($("<table>").addClass("table table-bordered table-striped " + org.login)
                 .append($("<thead>")
                     .append($("<tr>")
@@ -73,27 +73,27 @@ class BoostGitHub implements EntryPoint {
                         .append($("<th>").text("forks"))
                         .append($("<th>").text("lang"))))
                 .append($("<tbody>")))
-        showRepositories(rs, org.login)
+        showRepos(rs, org.login)
     }
     
-    def showRepositories(JsArray<Repository> rs, String kind) {
+    def showRepos(JsArray<Repo> rs, String kind) {
         $(".navbar .nav ." + kind).remove
         $(".navbar .nav").append(aDropdownMenu(rs, kind))
         
-        $("#Repositories ." + kind + " tbody tr").remove
-        $("#Repositories ." + kind + " tbody")
+        $("#Repos ." + kind + " tbody tr").remove
+        $("#Repos ." + kind + " tbody")
             .append(rs, [$("<tr>")
-                            .append($("<td>").text(it.name))
-                                             .click(openIssueEvent(it))
+                            .append($("<td>").text(it.getName))
+                                             .click(openIssueClick(it))
                                              .css("cursor", "pointer")
                             .append($("<td>").text(it.openIssuesString))
-                            .append($("<td>").text(it.watchersS))
-                            .append($("<td>").text(it.forksS))
-                            .append($("<td>").text(it.language))
+                            .append($("<td>").text(it.getWatchersS))
+                            .append($("<td>").text(it.getForksS))
+                            .append($("<td>").text(it.getLanguage))
             ])
     }
     
-    def aDropdownMenu(JsArray<Repository> rs, String kind) {
+    def aDropdownMenu(JsArray<Repo> rs, String kind) {
         $("<li>").addClass("dropdown " + kind)
             .append($("<a>").addClass("dropdown-toggle")
                             .attr("data-toggle", "dropdown")
@@ -104,31 +104,30 @@ class BoostGitHub implements EntryPoint {
                 .append(rs, [$("<li>").append(aOpenIssues(it))]))
     }
     
-    def aOpenIssues(Repository r) {
-        $("<a>").text(r.name + "(" + r.openIssuesString + ")")
+    def aOpenIssues(Repo r) {
+        $("<a>").text(r.getName + "(" + r.openIssuesString + ")")
                 .attr("href", "#")
-                .click(openIssueEvent(r))
+                .click(openIssueClick(r))
     }
     
-    def openIssueEvent(Repository r) {
+    def openIssueClick(Repo r) {
         clickEvent [
-            $("#Repositories").fadeOut(1000)
+            $("#Repos").fadeOut(1000)
             api.getIssues(r, callback[showIssues(r, it.data)])
             true
         ]
     }
     
-    def activeRepositoryName(Repository r) {
+    def activeRepositoryName(Repo r) {
         $("<li>").addClass("active")
-                .append($("<a>").attr("href", "#").text(r.name))
+                .append($("<a>").attr("href", "#").text(r.getName))
     }
     
-    def showIssues(Repository r, JsArray<Issue> issues) {
+    def showIssues(Repo r, JsArray<Issue> issues) {
     	$(".navbar .nav .active").remove
         $(".navbar .nav").append(activeRepositoryName(r))
         
         $("#Issues Backlog tbody tr").remove
-        $("#Issues .milestones tbody tr").remove
         $("#Issues .milestones").children.remove
         $("#Issues").fadeIn(1000)
         
@@ -143,7 +142,7 @@ class BoostGitHub implements EntryPoint {
                 $("#Issues ." + i.milestone.cssClass + " tbody")
                     .append(new IssueUI(i, r, mss.data, api).elm)
             ])
-        
+            
             "#Issues table".callTableDnD // drag and drop 
             
             $("#new-issue-button").click(newIssueClick(r, mss))
@@ -160,7 +159,7 @@ class BoostGitHub implements EntryPoint {
                 .append($("<tbody>")))
     }
     
-    def newIssueClick(Repository r, Milestones mss) {
+    def newIssueClick(Repo r, Milestones mss) {
         clickEvent[
             $("#new-issue-form").fadeIn(1000)
             $("#new-issue-form [name='submit']").click(clickEvent[
