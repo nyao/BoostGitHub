@@ -1,16 +1,19 @@
 package nyao.client
 
 import com.github.nyao.gwtgithub.client.GitHubApi
+import com.github.nyao.gwtgithub.client.api.Milestones
 import com.github.nyao.gwtgithub.client.api.Users
 import com.github.nyao.gwtgithub.client.models.GHUser
 import com.github.nyao.gwtgithub.client.models.Issue
+import com.github.nyao.gwtgithub.client.models.Milestone
+import com.github.nyao.gwtgithub.client.models.Repo
+import com.github.nyao.gwtgithub.client.values.IssueForSave
 import com.google.gwt.core.client.EntryPoint
 import com.google.gwt.core.client.JsArray
-import com.github.nyao.gwtgithub.client.models.Milestone
+import java.util.ArrayList
+import java.util.List
 import nyao.client.ui.IssueUI
-import com.github.nyao.gwtgithub.client.values.IssueForSave
-import com.github.nyao.gwtgithub.client.api.Milestones
-import com.github.nyao.gwtgithub.client.models.Repo
+import nyao.client.ui.MilestoneForm
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.SimpleAsyncCallback.*
@@ -19,9 +22,6 @@ import static nyao.util.XtendFunction.*
 import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
 import static extension nyao.util.XtendGitHubAPI.*
-import com.github.nyao.gwtgithub.client.values.MilestoneForSave
-import java.util.ArrayList
-import java.util.List
 
 class BoostGitHub implements EntryPoint {
     val api = new GitHubApi();
@@ -153,18 +153,7 @@ class BoostGitHub implements EntryPoint {
                 
                 $("#new-issue-button").click(newIssueClick(r, mss, issueList))
                 $("#setting").fadeIn(1000)
-                $("#milestones-button .dropdown-menu").append(mss.data, [ms|
-                    $("<li>").append($("<a>")
-                             .text(ms.title)
-                             .attr("name", ms.number)
-                             .attr("href", "#")
-                             .click(milestoneClick(ms, r, issueList))
-                    )
-                ])
-                val form = $("#milestone-form")
-                $("#milestones-button [name='new']").click(milestoneClick(null, r, issueList))
-                form.find("[name='submit']").click(submitMilestone(r, issueList))
-                form.find("[name='cancel']").click(clickEvent[form.fadeOut(1000);true])
+                new MilestoneForm(api, r, mss.data, issueList)
             
                 $("#labels-button [name='new']").click(newLabelClick)
             }
@@ -198,38 +187,6 @@ class BoostGitHub implements EntryPoint {
             $("#new-issue-form [name='cancel']").click(clickEvent[
                 $("#new-issue-form").fadeOut(1000)
                 true
-            ])
-            true
-        ]
-    }
-    
-    def milestoneClick(Milestone m, Repo r, List<IssueUI> issueList) {
-        clickEvent[
-            val form = $("#milestone-form")
-            form.find("[name='title']").gqVal(m?.title)
-            form.find("[name='description']").gqVal(m?.description)
-            form.attr("target", m?.number)
-            form.fadeIn(1000)
-            true;
-        ]
-    }
-    
-    def submitMilestone(Repo r, List<IssueUI> issueList) {
-        val form = $("#milestone-form")
-        clickEvent[ev|
-            val prop = new MilestoneForSave => [
-                setTitle(form.find("[name='title']").gqVal)
-                setDescription(form.find("[name='description']").gqVal)
-            ]
-            val targetNumber = if (form.attr("target").equals("0")) {null} else form.attr("target")
-            api.saveMilestone(r, targetNumber, prop, callback[ms|
-                if ($("#Issues .milestones ." + ms.cssClass).isEmpty) {
-                    $("#Issues .milestones").append(aMilestone(ms))
-                } else {
-                    $("#Issues .milestones ." + ms.cssClass + " h2").text(ms.title)
-                }
-                issueList.forEach([issueUI|issueUI.addMilestone(ms)])
-                form.fadeOut(1000)
             ])
             true
         ]
