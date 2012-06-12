@@ -6,7 +6,6 @@ import com.github.nyao.gwtgithub.client.models.Issue
 import com.github.nyao.gwtgithub.client.models.Label
 import com.github.nyao.gwtgithub.client.models.Milestone
 import com.github.nyao.gwtgithub.client.values.IssueForSave
-import com.google.gwt.core.client.JsArray
 import com.google.gwt.query.client.GQuery
 import java.util.ArrayList
 import org.eclipse.xtend.lib.Property
@@ -20,15 +19,16 @@ import static nyao.util.XtendFunction.*
 import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
 import static extension nyao.util.XtendGitHubAPI.*
+import java.util.List
 
 class IssueUI {
     var Issue issue
     val Repo repository
-    val JsArray<Milestone> milestones
+    val List<Milestone> milestones
     val GitHubApi api
     @Property GQuery elm
     
-    new(Issue issue, Repo repository, JsArray<Milestone> milestones, GitHubApi api) {
+    new(Issue issue, Repo repository, List<Milestone> milestones, GitHubApi api) {
         this.issue = issue
         this.repository = repository
         this.milestones = milestones
@@ -94,29 +94,40 @@ class IssueUI {
     def appendReadyList() {
         val result = new ArrayList<GQuery>
         milestones.filter([issue.milestone?.number != it.number]).forEach([ms|
-                    result.add(
-                    $("<li>")
-                        .append($("<a>").attr("href", "#").text(ms.title)
-                        .click(clickReady(ms.number, ms.cssClass))
-                    ))
-                ])
+                       result.add(
+                       $("<li>")
+                           .append($("<a>").attr("href", "#").text(ms.title)
+                           .click(clickReady(ms.number, ms.cssClass))
+                       ))
+                   ])
         if (issue.milestone != null) {
             result.add(($("<li>")
                     .append($("<a>").attr("href", "#")
+                                    .attr("name", "Backlog")
                                     .text("Backlog")
                                     .click(clickReady(null, "Backlog")))))
         }
         result
     }
     
+    def resetReady(String cssClass) {
+        elm.find(".dropdown-menu").children.remove
+        elm.find(".dropdown-menu").append(appendReadyList)
+        ("#Issues ." + cssClass + " table").calltableDnDUpdate // drag and drop
+    }
+    
+    def addMilestone(Milestone ms) {
+        this.milestones.add(ms)
+        resetReady(ms.cssClass)
+    }
+    
     def clickReady(Integer number, String cssClass) {
         clickEvent[
             val prop = new IssueForSave => [setMilestone(number)]
             api.editIssue(repository, issue, prop, callback[
+                issue = it
                 $("#Issues ." + cssClass + " tbody").append(elm)
-                elm.find(".dropdown-menu").children.remove
-                elm.find(".dropdown-menu").append(appendReadyList)
-                ("#Issues ." + cssClass + " table").calltableDnDUpdate // drag and drop
+                resetReady(cssClass)
             ])
             true
         ]

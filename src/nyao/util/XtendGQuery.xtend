@@ -19,6 +19,12 @@ class XtendGQuery {
         }
     }
     
+    def static <T extends JavaScriptObject> List<T> toList(JsArray<T> items) {
+        val result = new ArrayList<T>()
+        items.each([result.add(it)])
+        result
+    }
+    
     def static <T, K extends JavaScriptObject> List<T> map(JsArray<K> items, (K) => T f) {
         val result = new ArrayList<T>()
         items.each([result.add(f.apply(it))])

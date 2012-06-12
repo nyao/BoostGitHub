@@ -20,6 +20,8 @@ import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
 import static extension nyao.util.XtendGitHubAPI.*
 import com.github.nyao.gwtgithub.client.values.MilestoneForSave
+import java.util.ArrayList
+import java.util.List
 
 class BoostGitHub implements EntryPoint {
     val api = new GitHubApi();
@@ -139,17 +141,19 @@ class BoostGitHub implements EntryPoint {
                 }
             ])
             
+            val issueList = new ArrayList<IssueUI>
             issues.each([i|
-                $("#Issues ." + i.milestone.cssClass + " tbody")
-                    .append(new IssueUI(i, r, mss.data, api).elm)
+                val issue = new IssueUI(i, r, mss.data.toList, api)
+                issueList.add(issue)
+                $("#Issues ." + i.milestone.cssClass + " tbody").append(issue.elm)
             ])
             
             if (api.authorized) {
                 "#Issues table".callTableDnD // drag and drop 
                 
-                $("#new-issue-button").click(newIssueClick(r, mss))
+                $("#new-issue-button").click(newIssueClick(r, mss, issueList))
                 $("#setting").fadeIn(1000)
-                $("#milestones-button [name='new']").click(milestoneClick(r))
+                $("#milestones-button [name='new']").click(milestoneClick(r, issueList))
                 $("#labels-button [name='new']").click(newLabelClick)
             }
         ])
@@ -162,7 +166,7 @@ class BoostGitHub implements EntryPoint {
                 .append($("<tbody>")))
     }
     
-    def newIssueClick(Repo r, Milestones mss) {
+    def newIssueClick(Repo r, Milestones mss, List<IssueUI> issueList) { // cause side effect
         clickEvent[
             $("#new-issue-form").fadeIn(1000)
             $("#new-issue-form [name='submit']").click(clickEvent[
@@ -172,7 +176,9 @@ class BoostGitHub implements EntryPoint {
                     ]
                     api.createIssue(r, prop, callback[
                         $("#new-issue-form").fadeOut(1000)
-                        $("#Issues .Backlog tbody").append(new IssueUI(it, r, mss.data, api).elm)
+                        val issue = new IssueUI(it, r, mss.data.toList, api)
+                        issueList.add(issue)
+                        $("#Issues .Backlog tbody").append(issue.elm)
                         ("#Issues .Backlog table").calltableDnDUpdate // drag and drop
                     ])
                     true
@@ -185,7 +191,7 @@ class BoostGitHub implements EntryPoint {
         ]
     }
     
-    def milestoneClick(Repo r) {
+    def milestoneClick(Repo r, List<IssueUI> issueList) {
         clickEvent[
             val form = $("#milestone-form")
             form.find("[name='title']").gqVal("")
@@ -198,6 +204,7 @@ class BoostGitHub implements EntryPoint {
                 ]
                 api.createMilestone(r, prop, callback[ms|
                     $("#Issues .milestones").append(aMilestone(ms))
+                    issueList.forEach([issueUI|issueUI.addMilestone(ms)])
                     form.fadeOut(1000)
                 ])
                 true
