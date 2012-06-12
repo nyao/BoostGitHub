@@ -5,7 +5,6 @@ import com.github.nyao.gwtgithub.client.api.Milestones
 import com.github.nyao.gwtgithub.client.api.Users
 import com.github.nyao.gwtgithub.client.models.GHUser
 import com.github.nyao.gwtgithub.client.models.Issue
-import com.github.nyao.gwtgithub.client.models.Milestone
 import com.github.nyao.gwtgithub.client.models.Repo
 import com.github.nyao.gwtgithub.client.values.IssueForSave
 import com.google.gwt.core.client.EntryPoint
@@ -14,6 +13,7 @@ import java.util.ArrayList
 import java.util.List
 import nyao.client.ui.IssueUI
 import nyao.client.ui.MilestoneForm
+import nyao.client.ui.MilestoneUI
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.SimpleAsyncCallback.*
@@ -137,7 +137,7 @@ class BoostGitHub implements EntryPoint {
         api.getMilestones(r, callback[mss|
             mss.data.each([ms|
                 if ($("#Issues ." + ms.cssClass).isEmpty) {
-                    $("#Issues .milestones").append(aMilestone(ms))
+                    $("#Issues .milestones").append(new MilestoneUI(ms).elm)
                 }
             ])
             
@@ -151,7 +151,7 @@ class BoostGitHub implements EntryPoint {
             if (api.authorized) {
                 "#Issues table".callTableDnD // drag and drop 
                 
-                $("#new-issue-button").click(newIssueClick(r, mss, issueList))
+                $("#new-issue-button").click(clickNewIssue(r, mss, issueList))
                 $("#setting").fadeIn(1000)
                 new MilestoneForm(api, r, mss.data, issueList)
             
@@ -160,14 +160,7 @@ class BoostGitHub implements EntryPoint {
         ])
     }
     
-    def aMilestone(Milestone m) {
-        $("<div>").addClass(m.cssClass)
-            .append($("<h2>").text(m.title))
-            .append($("<table>").addClass("table table-bordered table-striped")
-                .append($("<tbody>")))
-    }
-    
-    def newIssueClick(Repo r, Milestones mss, List<IssueUI> issueList) { // cause side effect
+    def clickNewIssue(Repo r, Milestones mss, List<IssueUI> issueList) {
         clickEvent[
             $("#new-issue-form").fadeIn(1000)
             $("#new-issue-form [name='submit']").click(clickEvent[
