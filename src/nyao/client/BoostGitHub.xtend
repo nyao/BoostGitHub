@@ -19,6 +19,7 @@ import static nyao.util.XtendFunction.*
 import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
 import static extension nyao.util.XtendGitHubAPI.*
+import com.github.nyao.gwtgithub.client.values.MilestoneForSave
 
 class BoostGitHub implements EntryPoint {
     val api = new GitHubApi();
@@ -148,7 +149,7 @@ class BoostGitHub implements EntryPoint {
                 
                 $("#new-issue-button").click(newIssueClick(r, mss))
                 $("#setting").fadeIn(1000)
-                $("#milestones-button [name='new']").click(newMilestoneClick)
+                $("#milestones-button [name='new']").click(milestoneClick(r))
                 $("#labels-button [name='new']").click(newLabelClick)
             }
         ])
@@ -184,15 +185,25 @@ class BoostGitHub implements EntryPoint {
         ]
     }
     
-    def newMilestoneClick() {
+    def milestoneClick(Repo r) {
         clickEvent[
-            $("#milestone-form").fadeIn(1000)
-            $("#milestone-form [name='submit']").click(clickEvent[
-                $("#milestone-form").fadeOut(1000)
+            val form = $("#milestone-form")
+            form.find("[name='title']").gqVal("")
+            form.find("[name='description']").gqVal("")
+            form.fadeIn(1000)
+            form.find("[name='submit']").click(clickEvent[
+                val prop = new MilestoneForSave => [
+                    setTitle(form.find("[name='title']").gqVal)
+                    setDescription(form.find("[name='description']").gqVal)
+                ]
+                api.createMilestone(r, prop, callback[ms|
+                    $("#Issues .milestones").append(aMilestone(ms))
+                    form.fadeOut(1000)
+                ])
                 true
             ])
-            $("#milestone-form [name='cancel']").click(clickEvent[
-                $("#milestone-form").fadeOut(1000)
+            form.find("[name='cancel']").click(clickEvent[
+                form.fadeOut(1000)
                 true
             ])
             true;
