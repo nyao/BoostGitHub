@@ -62,4 +62,14 @@ class XtendGQuery {
         ])
         result
     }
+    
+    def static <T extends JavaScriptObject> T find(JsArray<T> items, (T) => Boolean f) {
+        var i = 0
+        while (i < items.length) {
+            val r = items.get(i)
+            if (f.apply(r)) return r;
+            i = i + 1
+        }
+        null as T
+    }
 }
