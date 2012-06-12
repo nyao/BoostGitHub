@@ -19,6 +19,7 @@ import static nyao.util.XtendFunction.*
 import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
 import static extension nyao.util.XtendGitHubAPI.*
+import com.github.nyao.gwtgithub.client.values.CommentForSave
 
 class IssueUI {
     var Issue issue
@@ -218,7 +219,8 @@ class IssueUI {
     def postComment() {
         clickEvent[
             val cadd = $(it.eventTarget).parent
-            api.createComment(repository, issue, cadd.find("textarea").gqVal, callback([
+            val prop = new CommentForSave => [setBody(cadd.find("textarea").gqVal)]
+            api.createComment(repository, issue, prop, callback([
                 makeComment(it).insertBefore(cadd)
                 cadd.find("textarea").gqVal("")
             ]))
