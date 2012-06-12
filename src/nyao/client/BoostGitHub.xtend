@@ -9,6 +9,8 @@ import com.google.gwt.core.client.EntryPoint
 import com.google.gwt.core.client.JsArray
 import com.github.nyao.gwtgithub.client.models.Milestone
 import nyao.client.ui.IssueUI
+import com.github.nyao.gwtgithub.client.values.IssueForSave
+import com.github.nyao.gwtgithub.client.api.Milestones
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.SimpleAsyncCallback.*
@@ -17,7 +19,6 @@ import static nyao.util.XtendFunction.*
 import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
 import static extension nyao.util.XtendGitHubAPI.*
-import com.github.nyao.gwtgithub.client.values.IssueForSave
 
 class BoostGitHub implements EntryPoint {
     val api = new GitHubApi();
@@ -45,6 +46,7 @@ class BoostGitHub implements EntryPoint {
         
         $("#Repositories").hide
         $("#Issues").hide
+        $("#setting").hide
         $("#new-issue-form").hide
         $("#milestone-form").hide
         $("#label-form").hide
@@ -142,44 +144,12 @@ class BoostGitHub implements EntryPoint {
                     .append(new IssueUI(i, r, mss.data, api).elm)
             ])
         
-            "#Issues table".callTableDnD // drag and drop
+            "#Issues table".callTableDnD // drag and drop 
             
-            $("#new-issue-button").click(clickEvent[
-                $("#new-issue-form").fadeIn(1000)
-                $("#new-issue-form [name='submit']").click(clickEvent[
-                        val prop = new IssueForSave => [
-                            setTitle($("#new-issue-form [name='title']").gqVal)
-                            setBody($("#new-issue-form [name='body']").gqVal)
-                        ]
-                        api.createIssue(r, prop, callback[
-                            $("#new-issue-form").fadeOut(1000)
-                            $("#Issues .Backlog tbody").append(new IssueUI(it, r, mss.data, api).elm)
-                            ("#Issues .Backlog table").calltableDnDUpdate // drag and drop
-                        ])
-                        true
-                ])
-                $("#new-issue-form [name='cancel']").click(clickEvent[
-                    $("#new-issue-form").fadeOut(1000)
-                    true
-                ])
-                true
-            ])
-            $("#milestones-button [name='new']").click(clickEvent[
-                $("#milestone-form").fadeIn(1000)
-                $("#milestone-form [name='cancel']").click(clickEvent[
-                    $("#milestone-form").fadeOut(1000)
-                    true
-                ])
-                true;
-            ])
-            $("#labels-button [name='new']").click(clickEvent[
-                $("#label-form").fadeIn(1000)
-                $("#label-form [name='cancel']").click(clickEvent[
-                    $("#label-form").fadeOut(1000)
-                    true
-                ])
-                true
-            ])
+            $("#new-issue-button").click(newIssueClick(r, mss))
+            $("#setting").fadeIn(1000)
+            $("#milestones-button [name='new']").click(newMilestoneClick)
+            $("#labels-button [name='new']").click(newLabelClick)
         ])
     }
     
@@ -188,5 +158,54 @@ class BoostGitHub implements EntryPoint {
             .append($("<h2>").text(m.title))
             .append($("<table>").addClass("table table-bordered table-striped")
                 .append($("<tbody>")))
+    }
+    
+    def newIssueClick(Repository r, Milestones mss) {
+        clickEvent[
+            $("#new-issue-form").fadeIn(1000)
+            $("#new-issue-form [name='submit']").click(clickEvent[
+                    val prop = new IssueForSave => [
+                        setTitle($("#new-issue-form [name='title']").gqVal)
+                        setBody($("#new-issue-form [name='body']").gqVal)
+                    ]
+                    api.createIssue(r, prop, callback[
+                        $("#new-issue-form").fadeOut(1000)
+                        $("#Issues .Backlog tbody").append(new IssueUI(it, r, mss.data, api).elm)
+                        ("#Issues .Backlog table").calltableDnDUpdate // drag and drop
+                    ])
+                    true
+            ])
+            $("#new-issue-form [name='cancel']").click(clickEvent[
+                $("#new-issue-form").fadeOut(1000)
+                true
+            ])
+            true
+        ]
+    }
+    
+    def newMilestoneClick() {
+        clickEvent[
+            $("#milestone-form").fadeIn(1000)
+            $("#milestone-form [name='submit']").click(clickEvent[
+                $("#milestone-form").fadeOut(1000)
+                true
+            ])
+            $("#milestone-form [name='cancel']").click(clickEvent[
+                $("#milestone-form").fadeOut(1000)
+                true
+            ])
+            true;
+        ]
+    }
+    
+    def newLabelClick() {
+        clickEvent[
+            $("#label-form").fadeIn(1000)
+            $("#label-form [name='cancel']").click(clickEvent[
+                $("#label-form").fadeOut(1000)
+                true
+            ])
+            true
+        ]
     }
 }
