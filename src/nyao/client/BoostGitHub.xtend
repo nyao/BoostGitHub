@@ -28,6 +28,7 @@ class BoostGitHub implements EntryPoint {
     
     override onModuleLoad() {
         $("#LoginSubmit").click(clickEvent[
+            initialView
             $("#Auth").fadeOut(1000)
             val user = $("#Login").gqVal
             $(".navbar .username").text(user)
@@ -38,6 +39,7 @@ class BoostGitHub implements EntryPoint {
         ])
         
         $("#TokenSubmit").click(clickEvent[
+            initialView
             $("#Auth").fadeOut(1000)
             $("#Repos").fadeIn(1000)
             api.setAccessToken($("#Token").gqVal)
@@ -46,22 +48,25 @@ class BoostGitHub implements EntryPoint {
             api.getOrgs(callback[showOrgs(it)])
             true
         ])
-        
+        initialView
+        $("#Auth .close").click(clickEvent[$("#Auth").fadeOut(1000);true])
+        $("#User").click(clickEvent[$("#Auth").fadeIn(1000);true])
+    }
+    
+    def initialView() {
         $("#Repos").hide
         $("#Issues").hide
         $("#setting").hide
         $("#new-issue-form").hide
         $("#milestone-form").hide
         $("#label-form").hide
-        $("#Auth .close").click(clickEvent[$("#Auth").fadeOut(1000);true])
-        $("#User").click(clickEvent[$("#Auth").fadeIn(1000);true])
     }
     
     def showOrgs(Users orgs) {
         $("#Repos .Orgs table").remove
         orgs.data.each[org|
             api.getRepos(org.login, 
-                                callback[showOrgRepos(org, it.getData)])
+                         callback[showOrgRepos(org, it.getData)])
         ]
     }
     
@@ -135,17 +140,23 @@ class BoostGitHub implements EntryPoint {
         $("#Issues").fadeIn(1000)
         
         api.getMilestones(r, callback[mss|
+            val milestoneList = new ArrayList<MilestoneUI>
             mss.data.each([ms|
                 if ($("#Issues ." + ms.cssClass).isEmpty) {
-                    $("#Issues .milestones").append(new MilestoneUI(ms).elm)
+                    val mUI = new MilestoneUI(ms)
+                    milestoneList.add(mUI)
+                    $("#Issues .milestones").append(mUI.elm)
                 }
             ])
+            milestoneList.add(new MilestoneUI(null)) // Backlog
             
             val issueList = new ArrayList<IssueUI>
             issues.each([i|
                 val issue = new IssueUI(i, r, mss.data.toList, api)
                 issueList.add(issue)
-                $("#Issues ." + i.milestone.cssClass + " tbody").append(issue.elm)
+                milestoneList.findFirst([
+                    it.milestone.cssClass.equals(i.milestone.cssClass)
+                ]).append(issue)
             ])
             
             if (api.authorized) {
