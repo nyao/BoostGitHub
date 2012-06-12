@@ -16,6 +16,12 @@
       tr:hover .ready {
         display: inline;
       }
+      .editButton {
+        display: none;
+      }
+      tr:hover .editButton {
+        display: inline;
+      }
     </style>
     <link href="./assets/css/bootstrap-responsive.css" rel="stylesheet">
     <script type="text/javascript" language="javascript" src="./assets/js/jquery.js"></script>
@@ -52,17 +58,17 @@
             <div class="span12">
                  <div class="well form-inline">
                     <button class="close">×</button>
-                    <input id="Login" type="text" class="span2" placeholder="Login">
+                    <input id="Login" type="text" class="span2" placeholder="Login (Read only)">
                     <button id="LoginSubmit" class="btn">Submit</button>
                     <p>or</p>
                     <input id="Token" type="text" class="span4" placeholder="Token">
                     <button id="TokenSubmit" class="btn">Submit</button>
-                    <a href="https://boostgithub.appspot.com/auth" target="_blank">auth</a>
+                    <a href="https://boostgithub.appspot.com/auth" target="_blank">auth from github</a>
                 </div>
             </div>
         </div>
         
-        <div class="row" id="Repositories">
+        <div class="row" id="Repos">
             <div class="span6 Repos">
                 <table class="table table-bordered table-striped">
                     <thead>
@@ -82,12 +88,86 @@
             </div>
         </div>
         
-        <div class="row" id="Issues">
-            <div class="span12">
+        <div class="row" id="setting">
+            <div class="span6">
                 <ul class="nav nav-pills">
-                    <li><a class="btn" href="#"><i class="icon-plus"></i>New Issue</a></li>
+                    <li><a id="new-issue-button" class="btn" href="#"><i class="icon-plus"></i>New Issue</a></li>
                 </ul>
+                <table id="new-issue-form">
+                    <thead>
+                        <th>New Issue Form</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" name="title" class="span5" placeholder="Title"></input></td>
+                        </tr><tr>
+                            <td><textarea name="body" class="span5" rows="3" placeholder="Body"></textarea></td>
+                        </tr><tr>
+                            <td><button name="submit" class="btn btn-primary">Submit</button>
+                                <button name="cancel" class="btn">Cancel</button></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
+            <div class="span6">
+                <ul class="nav nav-pills">
+                    <li>
+                        <div class="btn-group" id="milestones-button">
+                            <a class="btn dropdown-toggle" href="#" data-toggle="dropdown">
+                                <i class="icon-road"></i>Milestones<span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a name="new" href="#">New Milestone</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="btn-group" id="labels-button">
+                            <a class="btn dropdown-toggle" href="#" data-toggle="dropdown">
+                                <i class="icon-road"></i>Labels<span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a name="new" href="#">New Label</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+                <table id="milestone-form">
+                    <thead>
+                        <th>Milestone Form</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" name="title" class="span3" placeholder="Title"></input></td>
+                        </tr><tr>
+                            <td><textarea name="description" class="span4" rows="3" placeholder="Description"></textarea></td>
+                        </tr><tr>
+                            <td><input type="date" name="dueon" placeholder="due on"></input></td>
+                        </tr><tr>
+                            <td><button name="submit" class="btn btn-primary">Submit</button>
+                                <button name="cancel" class="btn">Cancel</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table id="label-form">
+                    <thead>
+                        <th>Label Form</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" name="name"  class="span2" placeholder="Name"></input></td>
+                        </tr><tr>
+                            <td><input type="text" name="color" class="span1" placeholder="Color"></textarea></td>
+                        </tr><tr>
+                            <td><button name="submit" class="btn btn-primary">Submit</button>
+                                <button name="cancel" class="btn">Cancel</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="row" id="Issues">
             <div class="span6">
                 <div class="Backlog">
                    <h2>Backlog</h2>
