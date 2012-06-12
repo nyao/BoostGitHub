@@ -28,18 +28,18 @@ class BoostGitHub implements EntryPoint {
             val user = $("#Login").gqVal
             $(".navbar .username").text(user)
             $("#Repositories").fadeIn(1000)
-            api.getRepositories(user, callback[showRepositories(it.data, "Repos")])
-            api.getOrganizations(user, callback[showOrgs(it)])
+            api.getRepos(user, callback[showRepositories(it.data, "Repos")])
+            api.getOrgs(user, callback[showOrgs(it)])
             true
         ])
         
         $("#TokenSubmit").click(clickEvent[
             $("#Auth").fadeOut(1000)
             $("#Repositories").fadeIn(1000)
-            api.setAuthorization($("#Token").gqVal)
+            api.setAccessToken($("#Token").gqVal)
             api.getUser(callback[$(".navbar .username").text(it.data.login)])
-            api.getMyRepository(callback[showRepositories(it.data, "Repos")])
-            api.getOrganizations(callback[showOrgs(it)])
+            api.getRepos(callback[showRepositories(it.data, "Repos")])
+            api.getOrgs(callback[showOrgs(it)])
             true
         ])
         
@@ -55,7 +55,7 @@ class BoostGitHub implements EntryPoint {
     def showOrgs(Users orgs) {
         $("#Repositories .Orgs table").remove
         orgs.data.each[org|
-            api.getRepositories(org.login, 
+            api.getRepos(org.login, 
                                 callback[showOrgRepositories(org, it.data)])
         ]
     }
