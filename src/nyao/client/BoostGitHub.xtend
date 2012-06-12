@@ -153,7 +153,19 @@ class BoostGitHub implements EntryPoint {
                 
                 $("#new-issue-button").click(newIssueClick(r, mss, issueList))
                 $("#setting").fadeIn(1000)
-                $("#milestones-button [name='new']").click(milestoneClick(r, issueList))
+                $("#milestones-button .dropdown-menu").append(mss.data, [ms|
+                    $("<li>").append($("<a>")
+                             .text(ms.title)
+                             .attr("name", ms.number)
+                             .attr("href", "#")
+                             .click(milestoneClick(ms, r, issueList))
+                    )
+                ])
+                val form = $("#milestone-form")
+                $("#milestones-button [name='new']").click(milestoneClick(null, r, issueList))
+                form.find("[name='submit']").click(submitMilestone(r, issueList))
+                form.find("[name='cancel']").click(clickEvent[form.fadeOut(1000);true])
+            
                 $("#labels-button [name='new']").click(newLabelClick)
             }
         ])
@@ -191,29 +203,35 @@ class BoostGitHub implements EntryPoint {
         ]
     }
     
-    def milestoneClick(Repo r, List<IssueUI> issueList) {
+    def milestoneClick(Milestone m, Repo r, List<IssueUI> issueList) {
         clickEvent[
             val form = $("#milestone-form")
-            form.find("[name='title']").gqVal("")
-            form.find("[name='description']").gqVal("")
+            form.find("[name='title']").gqVal(m?.title)
+            form.find("[name='description']").gqVal(m?.description)
+            form.attr("target", m?.number)
             form.fadeIn(1000)
-            form.find("[name='submit']").click(clickEvent[
-                val prop = new MilestoneForSave => [
-                    setTitle(form.find("[name='title']").gqVal)
-                    setDescription(form.find("[name='description']").gqVal)
-                ]
-                api.createMilestone(r, prop, callback[ms|
-                    $("#Issues .milestones").append(aMilestone(ms))
-                    issueList.forEach([issueUI|issueUI.addMilestone(ms)])
-                    form.fadeOut(1000)
-                ])
-                true
-            ])
-            form.find("[name='cancel']").click(clickEvent[
-                form.fadeOut(1000)
-                true
-            ])
             true;
+        ]
+    }
+    
+    def submitMilestone(Repo r, List<IssueUI> issueList) {
+        val form = $("#milestone-form")
+        clickEvent[ev|
+            val prop = new MilestoneForSave => [
+                setTitle(form.find("[name='title']").gqVal)
+                setDescription(form.find("[name='description']").gqVal)
+            ]
+            val targetNumber = if (form.attr("target").equals("0")) {null} else form.attr("target")
+            api.saveMilestone(r, targetNumber, prop, callback[ms|
+                if ($("#Issues .milestones ." + ms.cssClass).isEmpty) {
+                    $("#Issues .milestones").append(aMilestone(ms))
+                } else {
+                    $("#Issues .milestones ." + ms.cssClass + " h2").text(ms.title)
+                }
+                issueList.forEach([issueUI|issueUI.addMilestone(ms)])
+                form.fadeOut(1000)
+            ])
+            true
         ]
     }
     
