@@ -22,6 +22,7 @@ import static nyao.util.XtendFunction.*
 import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
 import static extension nyao.util.XtendGitHubAPI.*
+import nyao.client.ui.LabelForm
 
 class BoostGitHub implements EntryPoint {
     val api = new GitHubApi();
@@ -150,24 +151,25 @@ class BoostGitHub implements EntryPoint {
             ])
             milestoneList.add(new MilestoneUI(null)) // Backlog
             
-            val issueList = new ArrayList<IssueUI>
-            issues.each([i|
-                val issue = new IssueUI(i, r, mss.data.toList, api)
-                issueList.add(issue)
-                milestoneList.findFirst([
-                    it.milestone.cssClass.equals(i.milestone.cssClass)
-                ]).append(issue)
-            ])
-            
-            if (api.authorized) {
-                "#Issues table".callTableDnD // drag and drop 
+            api.getLabels(r, callback[ls|
+                val issueList = new ArrayList<IssueUI>
+                issues.each([i|
+                    val issue = new IssueUI(i, r, mss.data.toList, api)
+                    issueList.add(issue)
+                    milestoneList.findFirst([
+                        it.milestone.cssClass.equals(i.milestone.cssClass)
+                    ]).append(issue)
+                ])
                 
-                $("#new-issue-button").click(clickNewIssue(r, mss, issueList))
-                $("#setting").fadeIn(1000)
-                new MilestoneForm(api, r, mss.data, issueList)
-            
-                $("#labels-button [name='new']").click(newLabelClick)
-            }
+                if (api.authorized) {
+                    "#Issues table".callTableDnD // drag and drop 
+                    
+                    $("#new-issue-button").click(clickNewIssue(r, mss, issueList))
+                    $("#setting").fadeIn(1000)
+                    new MilestoneForm(api, r, mss.data, issueList)
+                    new LabelForm(api, r, ls.data, issueList)
+                }
+            ])
         ])
     }
     
@@ -190,17 +192,6 @@ class BoostGitHub implements EntryPoint {
             ])
             $("#new-issue-form [name='cancel']").click(clickEvent[
                 $("#new-issue-form").fadeOut(1000)
-                true
-            ])
-            true
-        ]
-    }
-    
-    def newLabelClick() {
-        clickEvent[
-            $("#label-form").fadeIn(1000)
-            $("#label-form [name='cancel']").click(clickEvent[
-                $("#label-form").fadeOut(1000)
                 true
             ])
             true

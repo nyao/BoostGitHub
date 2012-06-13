@@ -121,6 +121,10 @@ class IssueUI {
         resetReady(ms.cssClass)
     }
     
+    def addLabel(Label l) {
+        
+    }
+    
     def clickReady(Integer number, String cssClass) {
         clickEvent[
             val prop = new IssueForSave => [setMilestone(number)]
