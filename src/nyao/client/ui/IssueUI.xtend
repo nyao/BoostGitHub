@@ -24,19 +24,28 @@ import static extension nyao.util.XtendGitHubAPI.*
 class IssueUI {
     var Issue issue
     val Repo repo
+    val List<Label> ls
     val List<Milestone> ms
     val GitHubApi api
     @Property GQuery elm
     
-    new(Issue issue, Repo repo, List<Milestone> ms, GitHubApi api) {
+    new(Issue issue, Repo repo,List<Label> ls, List<Milestone> ms, GitHubApi api) {
         this.issue = issue
         this.repo = repo
+        this.ls = ls
         this.ms = ms
         this.api = api
         
-        elm = 
-        $("<tr>").id("issue-" + issue.number)
-            .append($("<td>").addClass("span1")
+        makeIssueUI
+    }
+    
+    def makeIssueUI() {
+        if (elm != null) {
+            elm.children.remove
+        } else {
+            elm = $("<tr>").id("issue-" + issue.number)
+        }
+        elm.append($("<td>").addClass("span1")
                 .append($("<a>").attr("href",   issue.htmlUrl)
                                 .attr("target", "_blank")
                                 .text("#" + String::valueOf(issue.number))))
@@ -122,7 +131,7 @@ class IssueUI {
     }
     
     def addLabel(Label l) {
-        
+        this.ls.add(l)
     }
     
     def clickReady(Integer number, String cssClass) {
@@ -157,25 +166,57 @@ class IssueUI {
             )
             .append($("<tr>")
                 .append($("<td>")
+                    .append(this.ls, [l|
+                        val exist = issue.labels.exists([l.name == it.name])
+                        val opacity = if (exist) "1" else "0.25"
+                        val cssClass = if (exist) "label-selected" else ""
+                        $("<span>").addClass("btn label " + cssClass)
+                                   .css("background-color", "#" + l.color)
+                                   .css("background-image", "none")
+                                   .css("opacity", opacity)
+                                   .attr("name", "" + l.name)
+                                   .text(l.name)
+                                   .click(clickEvent[
+                                       val target = $(it.eventTarget)
+                                       if (target.hasClass("label-selected")) {
+                                           target.css("opacity", "0.25")
+                                                 .removeClass("label-selected")
+                                       } else {
+                                           target.css("opacity", "1")
+                                                 .addClass("label-selected")
+                                       }
+                                       true
+                                   ])
+                    ])
+                )
+            )
+            .append($("<tr>")
+                .append($("<td>")
                     .append($("<button>").addClass("btn btn-primary").text("submit")
-                        .click(clickEvent[
-                            val prop = new IssueForSave => [
-                                setTitle(elm.find(".edit-title").gqVal)
-                                setBody(elm.find(".edit-body").gqVal)
-                            ]
-                            api.editIssue(repo, issue, prop, callback[
-                                elm.find(".edit").fadeOut(1000)
-                                elm.find(".title").text(it.title)
-                                issue = it
-                            ])
-                            true
-                        ])
+                        .click(submitEdit)
                     )
                     .append($("<button>").addClass("btn").text("cancel")
                         .click(clickEvent[elm.find(".edit").fadeOut(1000);true])
                     )
                 )
             )
+    }
+    
+    def submitEdit() {
+        clickEvent[
+            val prop = new IssueForSave => [
+                setTitle(elm.find(".edit-title").gqVal)
+                setBody(elm.find(".edit-body").gqVal)
+                setLabels(elm.find(".label-selected").mapByAttr("name"))
+            ]
+            api.editIssue(repo, issue, prop, callback[
+                elm.find(".edit").fadeOut(1000)
+                elm.find(".title").text(it.title)
+                issue = it
+                makeIssueUI
+            ])
+            true
+        ]
     }
     
     def makeDetailPanel() {

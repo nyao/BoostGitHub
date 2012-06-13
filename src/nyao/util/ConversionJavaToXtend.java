@@ -1,6 +1,12 @@
 package nyao.util;
 
+import java.util.List;
+
+import static com.google.gwt.query.client.GQuery.*;
+
+import com.google.gwt.query.client.Function;
 import com.google.gwt.query.client.GQuery;
+import com.google.gwt.user.client.Element;
 
 public final class ConversionJavaToXtend {
 
@@ -23,4 +29,14 @@ public final class ConversionJavaToXtend {
     public native static void calltableDnDUpdate(String src) /*-{
         $wnd.jQuery(src).tableDnDUpdate();
     }-*/;
+    
+    public static String[] mapByAttr(GQuery gq, final String key) {
+        List<String> result = gq.map(new Function() {
+            @Override
+            public Object f(Element e, int i) {
+                return $(e).attr(key);
+            }
+        });
+        return result.toArray(new String[0]);
+    }
 }

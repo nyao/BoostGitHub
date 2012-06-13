@@ -63,6 +63,10 @@ class XtendGQuery {
         result
     }
     
+    def static <T extends JavaScriptObject> boolean exists(JsArray<T> items, (T) => Boolean f) {
+        find(items, f) != null
+    }
+    
     def static <T extends JavaScriptObject> T find(JsArray<T> items, (T) => Boolean f) {
         var i = 0
         while (i < items.length) {

@@ -23,6 +23,7 @@ import static nyao.util.XtendFunction.*
 import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
 import static extension nyao.util.XtendGitHubAPI.*
+import com.github.nyao.gwtgithub.client.api.Labels
 
 class BoostGitHub implements EntryPoint {
     val api = new GitHubApi();
@@ -154,7 +155,7 @@ class BoostGitHub implements EntryPoint {
             api.getLabels(r, callback[ls|
                 val iUIs = new ArrayList<IssueUI>
                 is.each([i|
-                    val iUI = new IssueUI(i, r, ms.data.toList, api)
+                    val iUI = new IssueUI(i, r, ls.data.toList, ms.data.toList, api)
                     iUIs.add(iUI)
                     mUIs.findFirst([
                         it.m.cssClass.equals(i.milestone.cssClass)
@@ -164,7 +165,7 @@ class BoostGitHub implements EntryPoint {
                 if (api.authorized) {
                     "#Issues table".callTableDnD // drag and drop 
                     
-                    $("#new-issue-button").click(clickNewIssue(r, ms, iUIs))
+                    $("#new-issue-button").click(clickNewIssue(r, ls, ms, iUIs))
                     $("#setting").fadeIn(1000)
                     new MilestoneForm(api, r, ms.data, iUIs)
                     new LabelForm(api, r, ls.data, iUIs)
@@ -173,25 +174,26 @@ class BoostGitHub implements EntryPoint {
         ])
     }
     
-    def clickNewIssue(Repo r, Milestones ms, List<IssueUI> iUIs) {
+    def clickNewIssue(Repo r, Labels ls, Milestones ms, List<IssueUI> iUIs) {
         clickEvent[
-            $("#new-issue-form").fadeIn(1000)
+            val form = $("#new-issue-form") 
+            form.fadeIn(1000)
             $("#new-issue-form [name='submit']").click(clickEvent[
                     val prop = new IssueForSave => [
-                        setTitle($("#new-issue-form [name='title']").gqVal)
-                        setBody($("#new-issue-form [name='body']").gqVal)
+                        setTitle(form.find("[name='title']").gqVal)
+                        setBody(form.find("[name='body']").gqVal)
                     ]
                     api.createIssue(r, prop, callback[i|
-                        $("#new-issue-form").fadeOut(1000)
-                        val iUI = new IssueUI(i, r, ms.data.toList, api)
+                        form.fadeOut(1000)
+                        val iUI = new IssueUI(i, r, ls.data.toList, ms.data.toList, api)
                         iUIs.add(iUI)
                         $("#Issues .Backlog tbody").append(iUI.elm)
                         ("#Issues .Backlog table").calltableDnDUpdate // drag and drop
                     ])
                     true
             ])
-            $("#new-issue-form [name='cancel']").click(clickEvent[
-                $("#new-issue-form").fadeOut(1000)
+            form.find("[name='cancel']").click(clickEvent[
+                form.fadeOut(1000)
                 true
             ])
             true
