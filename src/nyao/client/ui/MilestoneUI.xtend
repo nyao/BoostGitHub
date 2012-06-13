@@ -12,11 +12,11 @@ import static extension nyao.util.XtendGQuery.*
 import static extension nyao.util.XtendGitHubAPI.*
 
 class MilestoneUI {
-    public val Milestone milestone
+    public val Milestone m
     @Property GQuery elm
     
     new(Milestone m) {
-        this.milestone = m
+        this.m = m
         
         if (m == null) {
             elm = $(".Backlog")

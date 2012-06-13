@@ -11,6 +11,7 @@ import java.util.ArrayList
 import org.eclipse.xtend.lib.Property
 import com.github.nyao.gwtgithub.client.values.CommentForSave
 import com.github.nyao.gwtgithub.client.models.Repo
+import java.util.List
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.SimpleAsyncCallback.*
@@ -19,19 +20,18 @@ import static nyao.util.XtendFunction.*
 import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
 import static extension nyao.util.XtendGitHubAPI.*
-import java.util.List
 
 class IssueUI {
     var Issue issue
-    val Repo repository
-    val List<Milestone> milestones
+    val Repo repo
+    val List<Milestone> ms
     val GitHubApi api
     @Property GQuery elm
     
-    new(Issue issue, Repo repository, List<Milestone> milestones, GitHubApi api) {
+    new(Issue issue, Repo repo, List<Milestone> ms, GitHubApi api) {
         this.issue = issue
-        this.repository = repository
-        this.milestones = milestones
+        this.repo = repo
+        this.ms = ms
         this.api = api
         
         elm = 
@@ -93,19 +93,19 @@ class IssueUI {
     
     def appendReadyList() {
         val result = new ArrayList<GQuery>
-        milestones.filter([issue.milestone?.number != it.number]).forEach([ms|
-                       result.add(
-                       $("<li>")
-                           .append($("<a>").attr("href", "#").text(ms.title)
-                           .click(clickReady(ms.number, ms.cssClass))
-                       ))
-                   ])
+        ms.filter([issue.milestone?.number != it.number]).forEach([ms|
+                     result.add(
+                     $("<li>")
+                         .append($("<a>").attr("href", "#").text(ms.title)
+                         .click(clickReady(ms.number, ms.cssClass))
+                     ))
+                 ])
         if (issue.milestone != null) {
             result.add(($("<li>")
-                    .append($("<a>").attr("href", "#")
-                                    .attr("name", "Backlog")
-                                    .text("Backlog")
-                                    .click(clickReady(null, "Backlog")))))
+                .append($("<a>").attr("href", "#")
+                                .attr("name", "Backlog")
+                                .text("Backlog")
+                                .click(clickReady(null, "Backlog")))))
         }
         result
     }
@@ -117,7 +117,7 @@ class IssueUI {
     }
     
     def addMilestone(Milestone ms) {
-        this.milestones.add(ms)
+        this.ms.add(ms)
         resetReady(ms.cssClass)
     }
     
@@ -128,7 +128,7 @@ class IssueUI {
     def clickReady(Integer number, String cssClass) {
         clickEvent[
             val prop = new IssueForSave => [setMilestone(number)]
-            api.editIssue(repository, issue, prop, callback[
+            api.editIssue(repo, issue, prop, callback[
                 issue = it
                 $("#Issues ." + cssClass + " tbody").append(elm)
                 resetReady(cssClass)
@@ -163,7 +163,7 @@ class IssueUI {
                                 setTitle(elm.find(".edit-title").gqVal)
                                 setBody(elm.find(".edit-body").gqVal)
                             ]
-                            api.editIssue(repository, issue, prop, callback[
+                            api.editIssue(repo, issue, prop, callback[
                                 elm.find(".edit").fadeOut(1000)
                                 elm.find(".title").text(it.title)
                                 issue = it
@@ -194,7 +194,7 @@ class IssueUI {
             val detail = elm.find(".detail")
             if (!detail.isVisible) {
                 detail.find("pre").text(issue.body)
-                api.getComments(repository, issue, callback[
+                api.getComments(repo, issue, callback[
                     val panel = detail.find(".comments")
                     panel.children.remove
                     panel.append(it.data, [makeComment(it)])
@@ -235,7 +235,7 @@ class IssueUI {
         clickEvent[
             val cadd = $(it.eventTarget).parent
             val prop = new CommentForSave => [setBody(cadd.find("textarea").gqVal)]
-            api.createComment(repository, issue, prop, callback([
+            api.createComment(repo, issue, prop, callback([
                 makeComment(it).insertBefore(cadd)
                 cadd.find("textarea").gqVal("")
             ]))

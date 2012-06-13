@@ -17,32 +17,31 @@ import static extension nyao.util.XtendGitHubAPI.*
 
 class MilestoneForm {
     val GitHubApi api
-    val List<IssueUI> issueList
+    val List<IssueUI> iUIs
     val Repo repo
+    val form = $("#milestone-form")
     
-    new(GitHubApi api, Repo r, JsArray<Milestone> mss, List<IssueUI> issueList) {
+    new(GitHubApi api, Repo r, JsArray<Milestone> ms, List<IssueUI> iUIs) {
         this.api = api
         this.repo = r
-        this.issueList = issueList
+        this.iUIs = iUIs
         
-        $("#milestones-button .dropdown-menu").append(mss, [ms| listItem(ms)])
-        val form = $("#milestone-form")
+        $("#milestones-button .dropdown-menu").append(ms, [m| listItem(m)])
         $("#milestones-button [name='new']").click(clickItem(null))
         form.find("[name='submit']").click(submit)
         form.find("[name='cancel']").click(clickEvent[form.fadeOut(1000);true])
     }
     
-    def listItem(Milestone ms) {
+    def listItem(Milestone m) {
         $("<li>").append($("<a>")
-                 .text(ms.title)
-                 .attr("name", ms.number)
+                 .text(m.title)
+                 .attr("name", m.number)
                  .attr("href", "#")
-                 .click(clickItem(ms)))
+                 .click(clickItem(m)))
     }
     
     def clickItem(Milestone m) {
         clickEvent[
-            val form = $("#milestone-form")
             form.find("[name='title']").gqVal(m?.title)
             form.find("[name='description']").gqVal(m?.description)
             form.attr("target", m?.number)
@@ -52,20 +51,19 @@ class MilestoneForm {
     }
     
     def submit() {
-        val form = $("#milestone-form")
         clickEvent[ev|
             val prop = new MilestoneForSave => [
                 setTitle(form.find("[name='title']").gqVal)
                 setDescription(form.find("[name='description']").gqVal)
             ]
             val targetNumber = if (form.attr("target").equals("0")) {null} else form.attr("target")
-            api.saveMilestone(repo, targetNumber, prop, callback[ms|
-                if ($("#Issues .milestones ." + ms.cssClass).isEmpty) {
-                    $("#Issues .milestones").append(new MilestoneUI(ms).elm)
+            api.saveMilestone(repo, targetNumber, prop, callback[m|
+                if ($("#Issues .milestones ." + m.cssClass).isEmpty) {
+                    $("#Issues .milestones").append(new MilestoneUI(m).elm)
                 } else {
-                    $("#Issues .milestones ." + ms.cssClass + " h2").text(ms.title)
+                    $("#Issues .milestones ." + m.cssClass + " h2").text(m.title)
                 }
-                issueList.forEach([issueUI|issueUI.addMilestone(ms)])
+                iUIs.forEach([iUI|iUI.addMilestone(m)])
                 form.fadeOut(1000)
             ])
             true

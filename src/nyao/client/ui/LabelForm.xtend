@@ -16,14 +16,14 @@ import static extension nyao.util.XtendGQuery.*
 
 class LabelForm {
     val GitHubApi api
-    val List<IssueUI> issueList
+    val List<IssueUI> iUIs
     val Repo repo
     val form = $("#label-form")
     
-    new(GitHubApi api, Repo r, JsArray<Label> ls, List<IssueUI> issueList) {
+    new(GitHubApi api, Repo r, JsArray<Label> ls, List<IssueUI> iUIs) {
         this.api = api
         this.repo = r
-        this.issueList = issueList
+        this.iUIs = iUIs
         
         $("#labels-button .dropdown-menu").append(ls, [l| listItem(l)])
         $("#labels-button [name='new']").click(clickItem(null))
@@ -57,7 +57,7 @@ class LabelForm {
             ]
             val targetNumber = if (form.attr("target").nullOrEmpty) {null} else form.attr("target")
             api.saveLabel(repo, targetNumber, prop, callback[l|
-                issueList.forEach([issueUI|issueUI.addLabel(l)])
+                iUIs.forEach([issueUI|issueUI.addLabel(l)])
                 form.fadeOut(1000)
             ])
             true

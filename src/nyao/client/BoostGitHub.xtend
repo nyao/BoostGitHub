@@ -14,6 +14,7 @@ import java.util.List
 import nyao.client.ui.IssueUI
 import nyao.client.ui.MilestoneForm
 import nyao.client.ui.MilestoneUI
+import nyao.client.ui.LabelForm
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.SimpleAsyncCallback.*
@@ -22,7 +23,6 @@ import static nyao.util.XtendFunction.*
 import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
 import static extension nyao.util.XtendGitHubAPI.*
-import nyao.client.ui.LabelForm
 
 class BoostGitHub implements EntryPoint {
     val api = new GitHubApi();
@@ -129,10 +129,10 @@ class BoostGitHub implements EntryPoint {
     
     def activeRepositoryName(Repo r) {
         $("<li>").addClass("active")
-                .append($("<a>").attr("href", "#").text(r.getName))
+                 .append($("<a>").attr("href", "#").text(r.getName))
     }
     
-    def showIssues(Repo r, JsArray<Issue> issues) {
+    def showIssues(Repo r, JsArray<Issue> is) {
     	$(".navbar .nav .active").remove
         $(".navbar .nav").append(activeRepositoryName(r))
         
@@ -140,40 +140,40 @@ class BoostGitHub implements EntryPoint {
         $("#Issues .milestones").children.remove
         $("#Issues").fadeIn(1000)
         
-        api.getMilestones(r, callback[mss|
-            val milestoneList = new ArrayList<MilestoneUI>
-            mss.data.each([ms|
-                if ($("#Issues ." + ms.cssClass).isEmpty) {
-                    val mUI = new MilestoneUI(ms)
-                    milestoneList.add(mUI)
+        api.getMilestones(r, callback[ms|
+            val mUIs = new ArrayList<MilestoneUI>
+            ms.data.each([m|
+                if ($("#Issues ." + m.cssClass).isEmpty) {
+                    val mUI = new MilestoneUI(m)
+                    mUIs.add(mUI)
                     $("#Issues .milestones").append(mUI.elm)
                 }
             ])
-            milestoneList.add(new MilestoneUI(null)) // Backlog
+            mUIs.add(new MilestoneUI(null)) // Backlog
             
             api.getLabels(r, callback[ls|
-                val issueList = new ArrayList<IssueUI>
-                issues.each([i|
-                    val issue = new IssueUI(i, r, mss.data.toList, api)
-                    issueList.add(issue)
-                    milestoneList.findFirst([
-                        it.milestone.cssClass.equals(i.milestone.cssClass)
-                    ]).append(issue)
+                val iUIs = new ArrayList<IssueUI>
+                is.each([i|
+                    val iUI = new IssueUI(i, r, ms.data.toList, api)
+                    iUIs.add(iUI)
+                    mUIs.findFirst([
+                        it.m.cssClass.equals(i.milestone.cssClass)
+                    ]).append(iUI)
                 ])
                 
                 if (api.authorized) {
                     "#Issues table".callTableDnD // drag and drop 
                     
-                    $("#new-issue-button").click(clickNewIssue(r, mss, issueList))
+                    $("#new-issue-button").click(clickNewIssue(r, ms, iUIs))
                     $("#setting").fadeIn(1000)
-                    new MilestoneForm(api, r, mss.data, issueList)
-                    new LabelForm(api, r, ls.data, issueList)
+                    new MilestoneForm(api, r, ms.data, iUIs)
+                    new LabelForm(api, r, ls.data, iUIs)
                 }
             ])
         ])
     }
     
-    def clickNewIssue(Repo r, Milestones mss, List<IssueUI> issueList) {
+    def clickNewIssue(Repo r, Milestones ms, List<IssueUI> iUIs) {
         clickEvent[
             $("#new-issue-form").fadeIn(1000)
             $("#new-issue-form [name='submit']").click(clickEvent[
@@ -181,11 +181,11 @@ class BoostGitHub implements EntryPoint {
                         setTitle($("#new-issue-form [name='title']").gqVal)
                         setBody($("#new-issue-form [name='body']").gqVal)
                     ]
-                    api.createIssue(r, prop, callback[
+                    api.createIssue(r, prop, callback[i|
                         $("#new-issue-form").fadeOut(1000)
-                        val issue = new IssueUI(it, r, mss.data.toList, api)
-                        issueList.add(issue)
-                        $("#Issues .Backlog tbody").append(issue.elm)
+                        val iUI = new IssueUI(i, r, ms.data.toList, api)
+                        iUIs.add(iUI)
+                        $("#Issues .Backlog tbody").append(iUI.elm)
                         ("#Issues .Backlog table").calltableDnDUpdate // drag and drop
                     ])
                     true
