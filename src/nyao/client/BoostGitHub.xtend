@@ -132,6 +132,7 @@ class BoostGitHub implements EntryPoint {
     def openIssueClick(Repo r) {
         clickEvent [
             $("#Repos").fadeOut(1000)
+            initialView
             api.getIssues(r, callback[showIssues(r, it.data)])
             true
         ]
@@ -146,7 +147,7 @@ class BoostGitHub implements EntryPoint {
     	$(".navbar .nav .active").remove
         $(".navbar .nav").append(activeRepositoryName(r))
         
-        $("#Issues Backlog tbody tr").remove
+        $("#Issues .Backlog tbody tr").remove
         $("#Issues .milestones").children.remove
         $("#Issues").fadeIn(1000)
         
