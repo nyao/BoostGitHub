@@ -15,6 +15,7 @@ import nyao.client.ui.IssueUI
 import nyao.client.ui.MilestoneForm
 import nyao.client.ui.MilestoneUI
 import nyao.client.ui.LabelForm
+import com.github.nyao.gwtgithub.client.api.Labels
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.SimpleAsyncCallback.*
@@ -23,17 +24,18 @@ import static nyao.util.XtendFunction.*
 import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
 import static extension nyao.util.XtendGitHubAPI.*
-import com.github.nyao.gwtgithub.client.api.Labels
 
 class BoostGitHub implements EntryPoint {
-    val api = new GitHubApi();
+    var GitHubApi api;
     
     override onModuleLoad() {
         $("#LoginSubmit").click(clickEvent[
-            initialView
+            fulllInitial
+            $("#Token").gqVal("")
             $("#Auth").fadeOut(1000)
             val user = $("#Login").gqVal
             $("#Repos").fadeIn(1000)
+            api = new GitHubApi()
             api.getUser(user, callback[
                 $(".navbar .username").text(it.data.login)
                 $(".navbar .avatar").attr("src", it.data.avatarUrl)
@@ -44,9 +46,11 @@ class BoostGitHub implements EntryPoint {
         ])
         
         $("#TokenSubmit").click(clickEvent[
-            initialView
+            fulllInitial
+            $("#Login").gqVal("")
             $("#Auth").fadeOut(1000)
             $("#Repos").fadeIn(1000)
+            api = new GitHubApi()
             api.setAccessToken($("#Token").gqVal)
             api.getUser(callback[
                 $(".navbar .username").text(it.data.login)
@@ -56,9 +60,14 @@ class BoostGitHub implements EntryPoint {
             api.getOrgs(callback[showOrgs(it)])
             true
         ])
-        initialView
+        fulllInitial
         $("#Auth .close").click(clickEvent[$("#Auth").fadeOut(1000);true])
         $("#User").click(clickEvent[$("#Auth").fadeIn(1000);true])
+    }
+    
+    def fulllInitial() {
+        initialView
+        $(".navbar .nav").children.remove
     }
     
     def initialView() {
@@ -68,6 +77,10 @@ class BoostGitHub implements EntryPoint {
         $("#new-issue-form").hide
         $("#milestone-form").hide
         $("#label-form").hide
+        
+        $("#Repos tbody tr").remove
+        $("#Issues .Backlog tbody tr").remove
+        $("#Issues .milestones").children.remove
     }
     
     def showOrgs(Users orgs) {
@@ -93,10 +106,8 @@ class BoostGitHub implements EntryPoint {
     }
     
     def showRepos(JsArray<Repo> rs, String kind) {
-        $(".navbar .nav ." + kind).remove
-        $(".navbar .nav").append(aDropdownMenu(rs, kind))
+        $(".navbar .nav").append(aOrgMenu(rs, kind))
         
-        $("#Repos ." + kind + " tbody tr").remove
         $("#Repos ." + kind + " tbody")
             .append(rs, [r|$("<tr>")
                             .append($("<td>").click(openIssueClick(r))
@@ -112,7 +123,7 @@ class BoostGitHub implements EntryPoint {
             ])
     }
     
-    def aDropdownMenu(JsArray<Repo> rs, String kind) {
+    def aOrgMenu(JsArray<Repo> rs, String kind) {
         $("<li>").addClass("dropdown " + kind)
             .append($("<a>").addClass("dropdown-toggle")
                             .attr("data-toggle", "dropdown")
@@ -133,6 +144,7 @@ class BoostGitHub implements EntryPoint {
         clickEvent [
             $("#Repos").fadeOut(1000)
             initialView
+            $(".navbar .nav .active").remove
             api.getIssues(r, callback[showIssues(r, it.data)])
             true
         ]
@@ -144,11 +156,7 @@ class BoostGitHub implements EntryPoint {
     }
     
     def showIssues(Repo r, JsArray<Issue> is) {
-    	$(".navbar .nav .active").remove
         $(".navbar .nav").append(activeRepositoryName(r))
-        
-        $("#Issues .Backlog tbody tr").remove
-        $("#Issues .milestones").children.remove
         $("#Issues").fadeIn(1000)
         
         api.getMilestones(r, callback[ms|
