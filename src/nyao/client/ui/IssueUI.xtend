@@ -132,6 +132,7 @@ class IssueUI {
     
     def addLabel(Label l) {
         this.ls.add(l)
+        makeIssueUI
     }
     
     def clickReady(Integer number, String cssClass) {

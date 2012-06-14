@@ -81,7 +81,7 @@ class EditIssueForm {
                         .click(submitEdit)
                     )
                     .append($("<button>").addClass("btn").text("cancel")
-                        .click(clickEvent[elm.find(".edit").fadeOut(1000);true])
+                        .click(clickEvent[elm.fadeOut(1000);true])
                     )
                 )
             )
@@ -95,8 +95,7 @@ class EditIssueForm {
                 setLabels(elm.find(".label-selected").mapByAttr("name"))
             ]
             api.editIssue(repo, issue, prop, callback[
-                elm.find(".edit").fadeOut(1000)
-                elm.find(".title").text(it.title)
+                elm.fadeOut(1000)
                 issueUI.issue = it
                 issueUI.makeIssueUI
             ])
