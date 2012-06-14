@@ -98,14 +98,17 @@ class BoostGitHub implements EntryPoint {
         
         $("#Repos ." + kind + " tbody tr").remove
         $("#Repos ." + kind + " tbody")
-            .append(rs, [$("<tr>")
-                            .append($("<td>").text(it.getName))
-                                             .click(openIssueClick(it))
+            .append(rs, [r|$("<tr>")
+                            .append($("<td>").click(openIssueClick(r))
                                              .css("cursor", "pointer")
-                            .append($("<td>").text(it.openIssuesString))
-                            .append($("<td>").text(it.getWatchersS))
-                            .append($("<td>").text(it.getForksS))
-                            .append($("<td>").text(it.getLanguage))
+                                .append($("<img>").attr("src", r.owner.avatarUrl)
+                                                  .attr("height", "18px")
+                                                  .attr("width", "18px"))
+                                .append($("<span>").text(r.getName).css("padding", "5px")))
+                            .append($("<td>").text(r.openIssuesString))
+                            .append($("<td>").text(r.getWatchersS))
+                            .append($("<td>").text(r.getForksS))
+                            .append($("<td>").text(r.getLanguage))
             ])
     }
     
