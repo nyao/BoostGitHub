@@ -25,6 +25,8 @@ import static extension nyao.util.XtendGQuery.*
 import static extension nyao.util.XtendGitHubAPI.*
 import com.github.nyao.gwtgithub.client.api.Issues
 import com.github.nyao.gwtgithub.client.api.Repos
+import com.google.gwt.user.client.Window
+import com.github.nyao.gwtgithub.client.values.RepoForSave
 
 class BoostGitHub implements EntryPoint {
     var GitHubApi api;
@@ -118,17 +120,23 @@ class BoostGitHub implements EntryPoint {
         $(".navbar .nav").append(aOrgMenu(rs, kind))
         
         $("#Repos ." + kind + " tbody")
-            .append(rs.data, [r|$("<tr>")
-                .append($("<td>").click(clickRepoOpen(r))
-                                 .css("cursor", "pointer")
-                    .append($("<img>").attr("src", r.owner.avatarUrl)
-                                      .attr("height", "18px")
-                                      .attr("width", "18px"))
-                    .append($("<span>").text(r.getName).css("padding", "5px")))
-                .append($("<td>").text(r.openIssuesString))
-                .append($("<td>").text(r.getWatchersS))
-                .append($("<td>").text(r.getForksS))
-                .append($("<td>").text(r.getLanguage))
+            .append(rs.data, [r|
+                val elm =
+                    $("<tr>")
+                    .append($("<td>")
+                        .append($("<img>").attr("src", r.owner.avatarUrl)
+                                          .attr("height", "18px")
+                                          .attr("width", "18px"))
+                        .append($("<span>").text(r.getName).css("padding", "5px")))
+                    .append($("<td>").text(r.openIssuesString))
+                    .append($("<td>").text(r.getWatchersS))
+                    .append($("<td>").text(r.getForksS))
+                    .append($("<td>").text(r.getLanguage))
+                if (r.hasIssues) {
+                    elm.click(clickEvent[clickRepoOpen(r)]).css("cursor", "pointer")
+                } else {
+                    elm.click(clickEvent[clickDisableRepo(r);true]).css("opacity", "0.5")
+                }
             ])
     }
     
@@ -146,17 +154,29 @@ class BoostGitHub implements EntryPoint {
     def aOpenIssues(Repo r) {
         $("<a>").text(r.getName + "(" + r.openIssuesString + ")")
                 .attr("href", "#")
-                .click(clickRepoOpen(r))
+                .click(clickEvent[clickRepoOpen(r)])
     }
     
     def clickRepoOpen(Repo r) {
-        clickEvent [
-            $("#Repos").fadeOut(1000)
-            initialView
-            $(".navbar .nav .active").remove
-            api.getIssues(r, callback[showRepo(r, it)])
-            true
-        ]
+        $("#Repos").fadeOut(1000)
+        initialView
+        $(".navbar .nav .active").remove
+        api.getIssues(r, callback[showRepo(r, it)])
+        true
+    }
+    
+    def clickDisableRepo(Repo r) {
+        if (!api.authorized) {
+            Window::alert("the repository issues is disable now.")
+        } else if (Window::confirm("enable issues?")) {
+            val prop = new RepoForSave => [
+                setName(r.name)
+                setHasIssues(true)
+            ]
+            api.saveRepo(r, prop, callback[
+                clickRepoOpen(r)
+            ])
+        }
     }
     
     def activeRepositoryName(Repo r) {
