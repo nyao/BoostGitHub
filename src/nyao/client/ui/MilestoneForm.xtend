@@ -26,14 +26,19 @@ class MilestoneForm {
         this.repo = r
         this.iUIs = iUIs
         
+        $("#milestones-button .dropdown-menu .item").remove
         $("#milestones-button .dropdown-menu").append(ms, [m| listItem(m)])
+        $("#milestones-button [name='new']").unbind("click")
         $("#milestones-button [name='new']").click(clickItem(null))
+        form.find("[name='submit']").unbind("click")
         form.find("[name='submit']").click(submit)
+        form.find("[name='cancel']").unbind("click")
         form.find("[name='cancel']").click(clickEvent[form.fadeOut(1000);true])
     }
     
     def listItem(Milestone m) {
         $("<li>").append($("<a>")
+                 .addClass("item")
                  .text(m.title)
                  .attr("name", m.number)
                  .attr("href", "#")

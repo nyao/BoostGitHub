@@ -25,14 +25,19 @@ class LabelForm {
         this.repo = r
         this.iUIs = iUIs
         
+        $("#labels-button .dropdown-menu .item").remove
         $("#labels-button .dropdown-menu").append(ls, [l| listItem(l)])
+        $("#labels-button [name='new']").unbind("click")
         $("#labels-button [name='new']").click(clickItem(null))
+        form.find("[name='submit']").unbind("click")
         form.find("[name='submit']").click(submit)
+        form.find("[name='cancel']").unbind("click")
         form.find("[name='cancel']").click(clickEvent[form.fadeOut(1000);true])
     }
     
     def listItem(Label l) {
         $("<li>").append($("<a>")
+                 .addClass("item")
                  .text(l.name)
                  .attr("name", l.name)
                  .attr("href", "#")
