@@ -5,7 +5,6 @@ import com.github.nyao.gwtgithub.client.models.Repo
 import java.util.List
 import com.github.nyao.gwtgithub.client.values.MilestoneForSave
 import com.github.nyao.gwtgithub.client.GitHubApi
-import com.google.gwt.core.client.JsArray
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.SimpleAsyncCallback.*
@@ -14,6 +13,7 @@ import static nyao.util.XtendFunction.*
 import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
 import static extension nyao.util.XtendGitHubAPI.*
+import com.github.nyao.gwtgithub.client.api.Milestones
 
 class MilestoneForm {
     val GitHubApi api
@@ -21,13 +21,13 @@ class MilestoneForm {
     val Repo repo
     val form = $("#milestone-form")
     
-    new(GitHubApi api, Repo r, JsArray<Milestone> ms, List<IssueUI> iUIs) {
+    new(GitHubApi api, Repo r, Milestones ms, List<IssueUI> iUIs) {
         this.api = api
         this.repo = r
         this.iUIs = iUIs
         
         $("#milestones-button .dropdown-menu .item").remove
-        $("#milestones-button .dropdown-menu").append(ms, [m| listItem(m)])
+        $("#milestones-button .dropdown-menu").append(ms.data, [m| listItem(m)])
         $("#milestones-button [name='new']").unbind("click")
         $("#milestones-button [name='new']").click(clickItem(null))
         form.find("[name='submit']").unbind("click")

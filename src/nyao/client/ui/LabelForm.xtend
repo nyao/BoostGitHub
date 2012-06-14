@@ -1,10 +1,10 @@
 package nyao.client.ui
 
 import com.github.nyao.gwtgithub.client.GitHubApi
+import com.github.nyao.gwtgithub.client.api.Labels
 import com.github.nyao.gwtgithub.client.models.Label
 import com.github.nyao.gwtgithub.client.models.Repo
 import com.github.nyao.gwtgithub.client.values.LabelForSave
-import com.google.gwt.core.client.JsArray
 import java.util.List
 
 import static com.google.gwt.query.client.GQuery.*
@@ -20,13 +20,13 @@ class LabelForm {
     val Repo repo
     val form = $("#label-form")
     
-    new(GitHubApi api, Repo r, JsArray<Label> ls, List<IssueUI> iUIs) {
+    new(GitHubApi api, Repo r, Labels ls, List<IssueUI> iUIs) {
         this.api = api
         this.repo = r
         this.iUIs = iUIs
         
         $("#labels-button .dropdown-menu .item").remove
-        $("#labels-button .dropdown-menu").append(ls, [l| listItem(l)])
+        $("#labels-button .dropdown-menu").append(ls.data, [l| listItem(l)])
         $("#labels-button [name='new']").unbind("click")
         $("#labels-button [name='new']").click(clickItem(null))
         form.find("[name='submit']").unbind("click")
