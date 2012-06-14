@@ -125,13 +125,15 @@ class IssueUI {
         ("#Issues ." + cssClass + " table").calltableDnDUpdate // drag and drop
     }
     
-    def addMilestone(Milestone ms) {
-        this.ms.add(ms)
-        resetReady(ms.cssClass)
+    def addMilestone(Milestone oldm, Milestone newm) {
+        this.ms.remove(oldm)
+        this.ms.add(newm)
+        makeIssueUI
     }
     
-    def addLabel(Label l) {
-        this.ls.add(l)
+    def addLabel(Label oldl, Label newl) {
+        this.ls.remove(oldl)
+        this.ls.add(newl)
         makeIssueUI
     }
     

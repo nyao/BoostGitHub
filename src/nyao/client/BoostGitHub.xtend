@@ -220,8 +220,8 @@ class BoostGitHub implements EntryPoint {
             
             $("#setting").fadeIn(1000)
             new NewIssueForm(api, r, ls, ms, iUIs)
-            new MilestoneForm(api, r, ms, iUIs)
-            new LabelForm(api, r, ls, iUIs)
+            new MilestoneForm(api, r, ms.data.toList, iUIs)
+            new LabelForm(api, r, ls.data.toList, iUIs)
         }
     }
 }
