@@ -33,8 +33,11 @@ class BoostGitHub implements EntryPoint {
             initialView
             $("#Auth").fadeOut(1000)
             val user = $("#Login").gqVal
-            $(".navbar .username").text(user)
             $("#Repos").fadeIn(1000)
+            api.getUser(user, callback[
+                $(".navbar .username").text(it.data.login)
+                $(".navbar .avatar").attr("src", it.data.avatarUrl)
+            ])
             api.getRepos(user, callback[showRepos(it.getData, "Repos")])
             api.getOrgs(user, callback[showOrgs(it)])
             true
@@ -45,7 +48,10 @@ class BoostGitHub implements EntryPoint {
             $("#Auth").fadeOut(1000)
             $("#Repos").fadeIn(1000)
             api.setAccessToken($("#Token").gqVal)
-            api.getUser(callback[$(".navbar .username").text(it.data.login)])
+            api.getUser(callback[
+                $(".navbar .username").text(it.data.login)
+                $(".navbar .avatar").attr("src", it.data.avatarUrl)
+            ])
             api.getRepos(callback[showRepos(it.getData, "Repos")])
             api.getOrgs(callback[showOrgs(it)])
             true
