@@ -22,7 +22,7 @@ import static extension nyao.util.XtendGQuery.*
 import static extension nyao.util.XtendGitHubAPI.*
 
 class IssueUI {
-    var Issue issue
+    @Property Issue issue
     val Repo repo
     val List<Label> ls
     val List<Milestone> ms
@@ -147,76 +147,7 @@ class IssueUI {
     }
     
     def makeEditForm() {
-        $("<table>").addClass("edit")
-            .append($("<tr>")
-                .append($("<td>")
-                    .append($("<input>").addClass("span5 edit-title")
-                                        .attr("type", "text")
-                                        .attr("placeholder", "Title")
-                                        .gqVal(issue.title)
-                    ))
-            )
-            .append($("<tr>")
-                .append($("<td>")
-                    .append($("<textarea>").addClass("span5 edit-body")
-                                           .attr("rows", "3")
-                                           .attr("placeholder", "Body")
-                                           .gqVal(issue.body)
-                    ))
-            )
-            .append($("<tr>")
-                .append($("<td>")
-                    .append(this.ls, [l|
-                        val exist = issue.labels.exists([l.name == it.name])
-                        val opacity = if (exist) "1" else "0.25"
-                        val cssClass = if (exist) "label-selected" else ""
-                        $("<span>").addClass("btn label " + cssClass)
-                                   .css("background-color", "#" + l.color)
-                                   .css("background-image", "none")
-                                   .css("opacity", opacity)
-                                   .attr("name", "" + l.name)
-                                   .text(l.name)
-                                   .click(clickEvent[
-                                       val target = $(it.eventTarget)
-                                       if (target.hasClass("label-selected")) {
-                                           target.css("opacity", "0.25")
-                                                 .removeClass("label-selected")
-                                       } else {
-                                           target.css("opacity", "1")
-                                                 .addClass("label-selected")
-                                       }
-                                       true
-                                   ])
-                    ])
-                )
-            )
-            .append($("<tr>")
-                .append($("<td>")
-                    .append($("<button>").addClass("btn btn-primary").text("submit")
-                        .click(submitEdit)
-                    )
-                    .append($("<button>").addClass("btn").text("cancel")
-                        .click(clickEvent[elm.find(".edit").fadeOut(1000);true])
-                    )
-                )
-            )
-    }
-    
-    def submitEdit() {
-        clickEvent[
-            val prop = new IssueForSave => [
-                setTitle(elm.find(".edit-title").gqVal)
-                setBody(elm.find(".edit-body").gqVal)
-                setLabels(elm.find(".label-selected").mapByAttr("name"))
-            ]
-            api.editIssue(repo, issue, prop, callback[
-                elm.find(".edit").fadeOut(1000)
-                elm.find(".title").text(it.title)
-                issue = it
-                makeIssueUI
-            ])
-            true
-        ]
+        new EditIssueForm(api, repo, issue, ls, this).elm
     }
     
     def makeDetailPanel() {
