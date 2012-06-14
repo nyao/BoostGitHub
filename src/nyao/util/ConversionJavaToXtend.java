@@ -4,6 +4,7 @@ import java.util.List;
 
 import static com.google.gwt.query.client.GQuery.*;
 
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.query.client.Function;
 import com.google.gwt.query.client.GQuery;
 import com.google.gwt.user.client.Element;
@@ -39,4 +40,12 @@ public final class ConversionJavaToXtend {
         });
         return result.toArray(new String[0]);
     }
+    
+    public static final native int lengthOr0(JsArray<?> items) /*-{
+      if (items.length == null) {
+          return 0;
+      } else {
+          return items.length;
+      }
+    }-*/;
 }

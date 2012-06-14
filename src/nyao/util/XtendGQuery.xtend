@@ -7,12 +7,13 @@ import java.util.ArrayList
 import com.google.gwt.query.client.GQuery
 
 import static extension nyao.util.XtendGQuery.*
+import static extension nyao.util.ConversionJavaToXtend.*
 
 class XtendGQuery {
     
     def static <T extends JavaScriptObject> each(JsArray<T> items, (T) => void f) {
         var i = 0
-        while (i < items.length) {
+        while (i < items.lengthOr0) {
             val r = items.get(i)
             f.apply(r)
             i = i + 1
@@ -69,7 +70,7 @@ class XtendGQuery {
     
     def static <T extends JavaScriptObject> T find(JsArray<T> items, (T) => Boolean f) {
         var i = 0
-        while (i < items.length) {
+        while (i < items.lengthOr0) {
             val r = items.get(i)
             if (f.apply(r)) return r;
             i = i + 1
