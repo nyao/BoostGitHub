@@ -11,7 +11,7 @@ class SimpleAsyncCallback<T> implements AsyncCallback<T> {
         return x
     }
     
-    (T)=>void onSuccess = []
+    (T)=>void onSuccess
     
     def void onSuccessDo((T)=>void onSuccess) {
         this.onSuccess = onSuccess

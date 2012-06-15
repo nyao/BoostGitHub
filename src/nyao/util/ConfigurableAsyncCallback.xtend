@@ -15,8 +15,13 @@ class ConfigurableAsyncCallback<T> implements AsyncCallback<T> {
         return x
     } 
     
-    (Throwable)=>void onFailure = []
-    (T)=>void onSuccess = []
+    (Throwable)=>void onFailure
+    (T)=>void onSuccess
+    
+    new() {
+        onSuccess = []
+        onFailure = []
+    }
     
     def void onSuccessDo((T)=>void onSuccess) {
         this.onSuccess = onSuccess
