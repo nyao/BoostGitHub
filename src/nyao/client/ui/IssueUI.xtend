@@ -1,17 +1,17 @@
 package nyao.client.ui
 
 import com.github.nyao.gwtgithub.client.GitHubApi
-import com.github.nyao.gwtgithub.client.models.Comment
 import com.github.nyao.gwtgithub.client.models.Issue
 import com.github.nyao.gwtgithub.client.models.Label
 import com.github.nyao.gwtgithub.client.models.Milestone
-import com.github.nyao.gwtgithub.client.values.IssueForSave
+import com.github.nyao.gwtgithub.client.values.IssueValue
+import com.github.nyao.gwtgithub.client.values.IssueCommentValue
 import com.google.gwt.query.client.GQuery
 import java.util.ArrayList
 import org.eclipse.xtend.lib.Property
-import com.github.nyao.gwtgithub.client.values.CommentForSave
 import com.github.nyao.gwtgithub.client.models.Repo
 import java.util.List
+import com.github.nyao.gwtgithub.client.models.IssueComment
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.SimpleAsyncCallback.*
@@ -139,7 +139,7 @@ class IssueUI {
     
     def clickReady(Integer number, String cssClass) {
         clickEvent[
-            val prop = new IssueForSave => [setMilestone(number)]
+            val prop = new IssueValue => [setMilestone(number)]
             api.editIssue(repo, issue, prop, callback[
                 issue = it
                 $("#Issues ." + cssClass + " tbody").append(elm)
@@ -169,7 +169,7 @@ class IssueUI {
             val detail = elm.find(".detail")
             if (!detail.isVisible) {
                 detail.find("pre").text(issue.body)
-                api.getComments(repo, issue, callback[
+                api.getIssueComments(repo, issue, callback[
                     val panel = detail.find(".comments")
                     panel.children.remove
                     panel.append(it.data, [makeComment(it)])
@@ -188,7 +188,7 @@ class IssueUI {
         ]
     }
     
-    def makeComment(Comment c) {
+    def makeComment(IssueComment c) {
         $("<div>").addClass("comment")
             .append($("<img>").attr("src", c.user.avatarUrl)
                               .attr("height", "48px")
@@ -209,8 +209,8 @@ class IssueUI {
     def postComment() {
         clickEvent[
             val cadd = $(it.eventTarget).parent
-            val prop = new CommentForSave => [setBody(cadd.find("textarea").gqVal)]
-            api.createComment(repo, issue, prop, callback([
+            val prop = new IssueCommentValue => [setBody(cadd.find("textarea").gqVal)]
+            api.createIssueComment(repo, issue, prop, callback([
                 makeComment(it).insertBefore(cadd)
                 cadd.find("textarea").gqVal("")
             ]))

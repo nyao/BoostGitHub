@@ -4,7 +4,7 @@ import com.github.nyao.gwtgithub.client.GitHubApi
 import com.github.nyao.gwtgithub.client.api.Labels
 import com.github.nyao.gwtgithub.client.api.Milestones
 import com.github.nyao.gwtgithub.client.models.Repo
-import com.github.nyao.gwtgithub.client.values.IssueForSave
+import com.github.nyao.gwtgithub.client.values.IssueValue
 import java.util.List
 
 import static com.google.gwt.query.client.GQuery.*
@@ -46,7 +46,7 @@ class NewIssueForm {
     
     def submit() {
         clickEvent[
-            val prop = new IssueForSave => [
+            val prop = new IssueValue => [
                 setTitle(form.find("[name='title']").gqVal)
                 setBody(form.find("[name='body']").gqVal)
             ]

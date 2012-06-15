@@ -4,7 +4,7 @@ import com.github.nyao.gwtgithub.client.GitHubApi
 import com.github.nyao.gwtgithub.client.models.Issue
 import com.github.nyao.gwtgithub.client.models.Label
 import com.github.nyao.gwtgithub.client.models.Repo
-import com.github.nyao.gwtgithub.client.values.IssueForSave
+import com.github.nyao.gwtgithub.client.values.IssueValue
 import com.google.gwt.query.client.GQuery
 import java.util.List
 import org.eclipse.xtend.lib.Property
@@ -89,7 +89,7 @@ class EditIssueForm {
     
     def submitEdit() {
         clickEvent[
-            val prop = new IssueForSave => [
+            val prop = new IssueValue => [
                 setTitle(elm.find(".edit-title").gqVal)
                 setBody(elm.find(".edit-body").gqVal)
                 setLabels(elm.find(".label-selected").mapByAttr("name"))

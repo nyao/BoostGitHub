@@ -7,6 +7,7 @@ import com.github.nyao.gwtgithub.client.api.Milestones
 import com.github.nyao.gwtgithub.client.api.Users
 import com.github.nyao.gwtgithub.client.models.GHUser
 import com.github.nyao.gwtgithub.client.models.Repo
+import com.github.nyao.gwtgithub.client.values.RepoValue
 import com.google.gwt.core.client.EntryPoint
 import java.util.ArrayList
 import java.util.List
@@ -15,6 +16,9 @@ import nyao.client.ui.LabelForm
 import nyao.client.ui.MilestoneForm
 import nyao.client.ui.MilestoneUI
 import nyao.client.ui.NewIssueForm
+import com.github.nyao.gwtgithub.client.api.Issues
+import com.github.nyao.gwtgithub.client.api.Repos
+import com.google.gwt.user.client.Window
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.SimpleAsyncCallback.*
@@ -23,10 +27,6 @@ import static nyao.util.XtendFunction.*
 import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
 import static extension nyao.util.XtendGitHubAPI.*
-import com.github.nyao.gwtgithub.client.api.Issues
-import com.github.nyao.gwtgithub.client.api.Repos
-import com.google.gwt.user.client.Window
-import com.github.nyao.gwtgithub.client.values.RepoForSave
 
 class BoostGitHub implements EntryPoint {
     var GitHubApi api;
@@ -169,7 +169,7 @@ class BoostGitHub implements EntryPoint {
         if (!api.authorized) {
             Window::alert("the repository issues is disable now.")
         } else if (Window::confirm("enable issues?")) {
-            val prop = new RepoForSave => [
+            val prop = new RepoValue => [
                 setName(r.name)
                 setHasIssues(true)
             ]

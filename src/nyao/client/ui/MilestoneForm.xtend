@@ -3,7 +3,7 @@ package nyao.client.ui
 import com.github.nyao.gwtgithub.client.GitHubApi
 import com.github.nyao.gwtgithub.client.models.Milestone
 import com.github.nyao.gwtgithub.client.models.Repo
-import com.github.nyao.gwtgithub.client.values.MilestoneForSave
+import com.github.nyao.gwtgithub.client.values.MilestoneValue
 import java.util.List
 
 import static com.google.gwt.query.client.GQuery.*
@@ -62,7 +62,7 @@ class MilestoneForm {
     
     def submit() {
         clickEvent[ev|
-            val prop = new MilestoneForSave => [
+            val prop = new MilestoneValue => [
                 setTitle(form.find("[name='title']").gqVal)
                 setDescription(form.find("[name='description']").gqVal)
             ]
