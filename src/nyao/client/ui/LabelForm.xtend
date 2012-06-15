@@ -1,9 +1,9 @@
 package nyao.client.ui
 
 import com.github.nyao.gwtgithub.client.GitHubApi
-import com.github.nyao.gwtgithub.client.models.Label
+import com.github.nyao.gwtgithub.client.models.issues.Label
 import com.github.nyao.gwtgithub.client.models.Repo
-import com.github.nyao.gwtgithub.client.values.LabelValue
+import com.github.nyao.gwtgithub.client.values.issues.LabelValue
 import java.util.List
 
 import static com.google.gwt.query.client.GQuery.*

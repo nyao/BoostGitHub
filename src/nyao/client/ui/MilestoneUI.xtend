@@ -1,7 +1,7 @@
 package nyao.client.ui
 
 import com.google.gwt.query.client.GQuery
-import com.github.nyao.gwtgithub.client.models.Milestone
+import com.github.nyao.gwtgithub.client.models.issues.Milestone
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.SimpleAsyncCallback.*

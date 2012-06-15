@@ -1,17 +1,17 @@
 package nyao.client.ui
 
 import com.github.nyao.gwtgithub.client.GitHubApi
-import com.github.nyao.gwtgithub.client.models.Issue
-import com.github.nyao.gwtgithub.client.models.Label
-import com.github.nyao.gwtgithub.client.models.Milestone
-import com.github.nyao.gwtgithub.client.values.IssueValue
-import com.github.nyao.gwtgithub.client.values.IssueCommentValue
+import com.github.nyao.gwtgithub.client.models.issues.Issue
+import com.github.nyao.gwtgithub.client.models.issues.Label
+import com.github.nyao.gwtgithub.client.models.issues.Milestone
+import com.github.nyao.gwtgithub.client.values.issues.IssueValue
+import com.github.nyao.gwtgithub.client.values.issues.IssueCommentValue
 import com.google.gwt.query.client.GQuery
 import java.util.ArrayList
 import org.eclipse.xtend.lib.Property
 import com.github.nyao.gwtgithub.client.models.Repo
 import java.util.List
-import com.github.nyao.gwtgithub.client.models.IssueComment
+import com.github.nyao.gwtgithub.client.models.issues.IssueComment
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.SimpleAsyncCallback.*

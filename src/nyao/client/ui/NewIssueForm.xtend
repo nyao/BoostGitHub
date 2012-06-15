@@ -4,7 +4,7 @@ import com.github.nyao.gwtgithub.client.GitHubApi
 import com.github.nyao.gwtgithub.client.api.Labels
 import com.github.nyao.gwtgithub.client.api.Milestones
 import com.github.nyao.gwtgithub.client.models.Repo
-import com.github.nyao.gwtgithub.client.values.IssueValue
+import com.github.nyao.gwtgithub.client.values.issues.IssueValue
 import java.util.List
 
 import static com.google.gwt.query.client.GQuery.*

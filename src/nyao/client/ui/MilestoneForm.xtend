@@ -1,9 +1,9 @@
 package nyao.client.ui
 
 import com.github.nyao.gwtgithub.client.GitHubApi
-import com.github.nyao.gwtgithub.client.models.Milestone
+import com.github.nyao.gwtgithub.client.models.issues.Milestone
 import com.github.nyao.gwtgithub.client.models.Repo
-import com.github.nyao.gwtgithub.client.values.MilestoneValue
+import com.github.nyao.gwtgithub.client.values.issues.MilestoneValue
 import java.util.List
 
 import static com.google.gwt.query.client.GQuery.*
