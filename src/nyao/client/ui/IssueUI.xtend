@@ -172,7 +172,7 @@ class IssueUI {
                 api.getIssueComments(repo, issue, callback[
                     val panel = detail.find(".comments")
                     panel.children.remove
-                    panel.append(it.data, [makeComment(it)])
+                    panel.append(it.getData, [makeComment(it)])
                     panel.appendIf(makeCommentAdd, [|api.authorized])
                 ])
                 dt.find("i")
