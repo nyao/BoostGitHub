@@ -102,7 +102,7 @@ class IssueUI {
     
     def appendReadyList() {
         val result = new ArrayList<GQuery>
-        ms.filter([issue.milestone?.number != it.number]).forEach([ms|
+        ms.filter([issue.milestone?.number.compareTo(it.number) != 0]).forEach([ms|
                      result.add(
                      $("<li>")
                          .append($("<a>").attr("href", "#").text(ms.title)
