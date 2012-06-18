@@ -142,8 +142,11 @@ class IssueUI {
             val prop = new IssueValue => [setMilestone(number)]
             api.editIssue(repo, issue, prop, callback[
                 issue = it
-                $("#Issues ." + cssClass + " tbody").append(elm)
-                resetReady(cssClass)
+                elm.fadeOut(1000, event[
+                    $("#Issues ." + cssClass + " tbody").append(elm)
+                    elm.fadeIn(1000)
+                    resetReady(cssClass)
+                ])
             ])
             true
         ]
