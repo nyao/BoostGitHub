@@ -6,7 +6,7 @@ import com.github.nyao.gwtgithub.client.models.issues.Label
 import com.github.nyao.gwtgithub.client.models.issues.Milestone
 import com.github.nyao.gwtgithub.client.values.issues.IssueValue
 import java.util.List
-import com.github.nyao.gwtgithub.client.api.JSONs
+import com.github.nyao.gwtgithub.client.models.JSONs
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.SimpleAsyncCallback.*

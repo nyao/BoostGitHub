@@ -16,8 +16,8 @@ import nyao.client.ui.LabelForm
 import nyao.client.ui.MilestoneForm
 import nyao.client.ui.MilestoneUI
 import nyao.client.ui.NewIssueForm
-import com.github.nyao.gwtgithub.client.api.JSONs
-import com.github.nyao.gwtgithub.client.api.AJSON
+import com.github.nyao.gwtgithub.client.models.JSONs
+import com.github.nyao.gwtgithub.client.models.AJSON
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.SimpleAsyncCallback.*
