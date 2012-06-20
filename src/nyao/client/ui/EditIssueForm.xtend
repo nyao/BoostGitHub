@@ -92,7 +92,7 @@ class EditIssueForm {
             val prop = new IssueValue => [
                 setTitle(elm.find(".edit-title").gqVal)
                 setBody(elm.find(".edit-body").gqVal)
-                setLabels(elm.find(".label-selected").mapByAttr("name"))
+                setLabels(elm.find(".label-selected").mapByAttrToString("name"))
             ]
             api.editIssue(repo, issue, prop, callback[
                 elm.fadeOut(1000)

@@ -4,6 +4,10 @@ import java.util.List;
 
 import static com.google.gwt.query.client.GQuery.*;
 
+import com.github.nyao.gwtgithub.client.GitHubApi;
+import com.github.nyao.gwtgithub.client.models.AJSON;
+import com.github.nyao.gwtgithub.client.models.Repo;
+import com.github.nyao.gwtgithub.client.models.gitdata.Reference;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.query.client.Function;
 import com.google.gwt.query.client.GQuery;
@@ -23,22 +27,34 @@ public final class ConversionJavaToXtend {
         return src.val(name);
     }
     
-    public native static void callTableDnD(String src) /*-{
-        $wnd.jQuery(src).tableDnD();
+    public native static void callTableDnD(String src, GitHubApi api, Repo repo, Reference ref) /*-{
+        $wnd.jQuery(src).tableDnD({
+            onDrop: function(table, row) {
+                @nyao.client.BoostGitHub::setTimer(Lcom/github/nyao/gwtgithub/client/GitHubApi;Lcom/github/nyao/gwtgithub/client/models/Repo;Lcom/github/nyao/gwtgithub/client/models/gitdata/Reference;)(api, repo, ref);
+            }
+        });
     }-*/;
     
-    public native static void calltableDnDUpdate(String src) /*-{
-        $wnd.jQuery(src).tableDnDUpdate();
+    public native static void calltableDnDUpdate(String src, GitHubApi api, Repo repo, Reference ref) /*-{
+        $wnd.jQuery(src).tableDnDUpdate({
+            onDrop: function(table, row) {
+                @nyao.client.BoostGitHub::setTimer(Lcom/github/nyao/gwtgithub/client/GitHubApi;Lcom/github/nyao/gwtgithub/client/models/Repo;Lcom/github/nyao/gwtgithub/client/models/gitdata/Reference;)(api, repo, ref);
+            }
+        });
     }-*/;
-    
-    public static String[] mapByAttr(GQuery gq, final String key) {
+
+    public static List<String> mapByAttr(GQuery gq, final String key) {
         List<String> result = gq.map(new Function() {
             @Override
             public Object f(Element e, int i) {
                 return $(e).attr(key);
             }
         });
-        return result.toArray(new String[0]);
+        return result;
+    }
+
+    public static String[] mapByAttrToString(GQuery gq, final String key) {
+        return mapByAttr(gq, key).toArray(new String[0]);
     }
     
     public static final native int lengthOr0(JsArray<?> items) /*-{

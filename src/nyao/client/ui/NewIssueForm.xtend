@@ -1,12 +1,13 @@
 package nyao.client.ui
 
 import com.github.nyao.gwtgithub.client.GitHubApi
+import com.github.nyao.gwtgithub.client.models.JSONs
 import com.github.nyao.gwtgithub.client.models.Repo
+import com.github.nyao.gwtgithub.client.models.gitdata.Reference
 import com.github.nyao.gwtgithub.client.models.issues.Label
 import com.github.nyao.gwtgithub.client.models.issues.Milestone
 import com.github.nyao.gwtgithub.client.values.issues.IssueValue
 import java.util.List
-import com.github.nyao.gwtgithub.client.models.JSONs
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.SimpleAsyncCallback.*
@@ -21,11 +22,13 @@ class NewIssueForm {
     val JSONs<Label> ls
     val JSONs<Milestone> ms
     val Repo repo
+    val Reference ref
     val form = $("#new-issue-form")
     
-    new(GitHubApi api, Repo r, JSONs<Label> ls, JSONs<Milestone> ms, List<IssueUI> iUIs) {
+    new(GitHubApi api, Repo r, Reference ref, JSONs<Label> ls, JSONs<Milestone> ms, List<IssueUI> iUIs) {
         this.api = api
         this.repo = r
+        this.ref = ref
         this.iUIs = iUIs
         this.ls = ls
         this.ms = ms
@@ -53,10 +56,10 @@ class NewIssueForm {
             ]
             api.createIssue(repo, prop, callback[i|
                 form.fadeOut(1000)
-                val iUI = new IssueUI(i, repo, ls.getData.toList, ms.getData.toList, api)
+                val iUI = new IssueUI(i, repo, ref, ls.getData.toList, ms.getData.toList, api)
                 iUIs.add(iUI)
                 $("#Issues .Backlog tbody").append(iUI.elm)
-                ("#Issues .Backlog table").calltableDnDUpdate // drag and drop
+                ("#Issues .Backlog table").calltableDnDUpdate(api, repo, ref) // drag and drop
             ])
             true
         ]

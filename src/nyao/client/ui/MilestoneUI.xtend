@@ -22,7 +22,8 @@ class MilestoneUI {
             elm = $(".Backlog")
         } else {
             elm =
-            $("<div>").addClass(m.cssClass)
+            $("<div>").addClass(m.cssClass + " milestone")
+                      .attr("number", m.number)
                 .append($("<h2>").text(m.title))
                 .append($("<table>").addClass("table table-bordered table-striped")
                     .append($("<tbody>")))

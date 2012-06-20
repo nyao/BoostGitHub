@@ -16,19 +16,22 @@ import nyao.client.ui.LabelForm
 import nyao.client.ui.MilestoneForm
 import nyao.client.ui.MilestoneUI
 import nyao.client.ui.NewIssueForm
+import nyao.util.XtendTimer
 import com.github.nyao.gwtgithub.client.models.JSONs
 import com.github.nyao.gwtgithub.client.models.AJSON
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.SimpleAsyncCallback.*
 import static nyao.util.XtendFunction.*
+import static nyao.util.XtendTimer.*
 
 import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
 import static extension nyao.util.XtendGitHubAPI.*
+import com.github.nyao.gwtgithub.client.models.gitdata.Reference
 
 class BoostGitHub implements EntryPoint {
-    var GitHubApi api;
+    var GitHubApi api
     
     override onModuleLoad() {
         $("#LoginSubmit").click(clickLogin)
@@ -207,21 +210,51 @@ class BoostGitHub implements EntryPoint {
     def showIssuesWIthLabel(Repo r, JSONs<Issue> is,
                             JSONs<Milestone> ms, List<MilestoneUI> mUIs, JSONs<Label> ls) {
         val iUIs = new ArrayList<IssueUI>
-        is.getData.each([i|
-            val iUI = new IssueUI(i, r, ls.getData.toList, ms.getData.toList, api)
-            iUIs.add(iUI)
-            mUIs.findFirst([
-                it.m.cssClass == i.milestone.cssClass
-            ]).append(iUI)
+        api.getReferenceHead(r, "boostgh", callback[
+            val ref = it.data
+            is.getData.each([i|
+                val iUI = new IssueUI(i, r, ref, ls.getData.toList, ms.getData.toList, api)
+                iUIs.add(iUI)
+                mUIs.findFirst([
+                    it.m.cssClass == i.milestone.cssClass 
+                ]).append(iUI)
+            ])
+            
+            if (api.authorized) {
+                "#Issues table".callTableDnD(api, r, ref) // drag and drop
+                
+                $("#setting").fadeIn(1000)
+                new NewIssueForm(api, r, ref, ls, ms, iUIs)
+                new MilestoneForm(api, r, ms.getData.toList, iUIs)
+                new LabelForm(api, r, ls.getData.toList, iUIs)
+            }
+        ])
+    }
+    
+//    static XtendTimer timer
+    def static setTimer(GitHubApi api, Repo repo, Reference ref) {
+        updateOrder(api, repo, ref)
+//        println("fugafuga")
+//        timer?.cancel
+//        timer = timer[|
+//            println("hoge")
+//        ]
+//        Window::addCloseHandler([println("barbar")])
+//        timer.schedule(5000)
+    }
+    
+    def static updateOrder(GitHubApi api, Repo repo, Reference ref) {
+        val milestones = new ArrayList<String>
+        $("#Issues .milestone").each(event[m|
+            val milestoneNumber = $(m).attr("number")
+            val issueNumbers = $(m).find(".issue").mapByAttr("number").join(",")
+            milestones.add("{milestone: " + milestoneNumber + ", issues: [" + issueNumbers + "]}")
         ])
         
-        if (api.authorized) {
-            "#Issues table".callTableDnD // drag and drop 
-            
-            $("#setting").fadeIn(1000)
-            new NewIssueForm(api, r, ls, ms, iUIs)
-            new MilestoneForm(api, r, ms.getData.toList, iUIs)
-            new LabelForm(api, r, ls.getData.toList, iUIs)
-        }
+        val updateJson = "{[\n" + milestones.join(",\n") + "\n]}"
+        println(updateJson)
+        api.createSimpleCommitAndPush(repo, ref, "boostgh", "order.json", updateJson, "updated order", callback[
+            "#Issues table".callTableDnD(api, repo, it)
+        ])
     }
 }

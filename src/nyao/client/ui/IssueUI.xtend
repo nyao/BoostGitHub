@@ -1,17 +1,18 @@
 package nyao.client.ui
 
 import com.github.nyao.gwtgithub.client.GitHubApi
+import com.github.nyao.gwtgithub.client.models.Repo
+import com.github.nyao.gwtgithub.client.models.gitdata.Reference
 import com.github.nyao.gwtgithub.client.models.issues.Issue
+import com.github.nyao.gwtgithub.client.models.issues.IssueComment
 import com.github.nyao.gwtgithub.client.models.issues.Label
 import com.github.nyao.gwtgithub.client.models.issues.Milestone
-import com.github.nyao.gwtgithub.client.values.issues.IssueValue
 import com.github.nyao.gwtgithub.client.values.issues.IssueCommentValue
+import com.github.nyao.gwtgithub.client.values.issues.IssueValue
 import com.google.gwt.query.client.GQuery
 import java.util.ArrayList
-import org.eclipse.xtend.lib.Property
-import com.github.nyao.gwtgithub.client.models.Repo
 import java.util.List
-import com.github.nyao.gwtgithub.client.models.issues.IssueComment
+import org.eclipse.xtend.lib.Property
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.SimpleAsyncCallback.*
@@ -27,11 +28,13 @@ class IssueUI {
     val List<Label> ls
     val List<Milestone> ms
     val GitHubApi api
+    val Reference ref
     @Property GQuery elm
     
-    new(Issue issue, Repo repo,List<Label> ls, List<Milestone> ms, GitHubApi api) {
+    new(Issue issue, Repo repo, Reference ref, List<Label> ls, List<Milestone> ms, GitHubApi api) {
         this.issue = issue
         this.repo = repo
+        this.ref = ref
         this.ls = ls
         this.ms = ms
         this.api = api
@@ -43,7 +46,7 @@ class IssueUI {
         if (elm != null) {
             elm.children.remove
         } else {
-            elm = $("<tr>").id("issue-" + issue.number)
+            elm = $("<tr>").id("issue-" + issue.number).addClass("issue").attr("number", issue.number)
         }
         elm.append($("<td>").addClass("span1")
                 .append($("<a>").attr("href",   issue.htmlUrl)
@@ -122,7 +125,7 @@ class IssueUI {
     def resetReady(String cssClass) {
         elm.find(".dropdown-menu").children.remove
         elm.find(".dropdown-menu").append(appendReadyList)
-        ("#Issues ." + cssClass + " table").calltableDnDUpdate // drag and drop
+        ("#Issues ." + cssClass + " table").calltableDnDUpdate(api, repo, ref) // drag and drop
     }
     
     def addMilestone(Milestone oldm, Milestone newm) {
