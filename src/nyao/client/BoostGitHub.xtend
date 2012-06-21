@@ -19,6 +19,9 @@ import nyao.client.ui.NewIssueForm
 import nyao.util.XtendTimer
 import com.github.nyao.gwtgithub.client.models.JSONs
 import com.github.nyao.gwtgithub.client.models.AJSON
+import com.github.nyao.gwtgithub.client.models.gitdata.Reference
+import com.google.gwt.core.client.JsonUtils
+import nyao.client.model.Orders
 
 import static com.google.gwt.query.client.GQuery.*
 import static nyao.util.SimpleAsyncCallback.*
@@ -28,7 +31,6 @@ import static nyao.util.XtendTimer.*
 import static extension nyao.util.ConversionJavaToXtend.*
 import static extension nyao.util.XtendGQuery.*
 import static extension nyao.util.XtendGitHubAPI.*
-import com.github.nyao.gwtgithub.client.models.gitdata.Reference
 
 class BoostGitHub implements EntryPoint {
     var GitHubApi api
@@ -212,35 +214,47 @@ class BoostGitHub implements EntryPoint {
         val iUIs = new ArrayList<IssueUI>
         api.getReferenceHead(r, "boostgh", callback[
             val ref = it.data
-            is.getData.each([i|
-                val iUI = new IssueUI(i, r, ref, ls.getData.toList, ms.getData.toList, api)
-                iUIs.add(iUI)
-                mUIs.findFirst([
-                    it.m.cssClass == i.milestone.cssClass 
-                ]).append(iUI)
-            ])
+            api.getContent(r, "order.json", "boostgh", callback[
+                if (it.data.content == null) {
+                    is.data.each([i|
+                        val iUI = new IssueUI(i, r, ref, ls.getData.toList, ms.getData.toList, api)
+                        iUIs.add(iUI)
+                        mUIs.findFirst([
+                            it.m.cssClass == i.milestone.cssClass 
+                        ]).append(iUI)
+                    ])
+                } else {
+                    val content = it.data
+                    val Orders orders = JsonUtils::safeEval(content.decodedContent)
+                    orders.orders.each([order|
+                        val mUI = mUIs.findFirst([it.m?.number == order.milestone]) // 0 is Backlog
+                        order.issues.each([issueNumber|
+                            val i = is.data.find([it.number == issueNumber])
+                            val iUI = new IssueUI(i, r, ref, ls.getData.toList, ms.getData.toList, api)
+                            mUI.append(iUI)
+                        ])
+                    ])
+                }
             
-            if (api.authorized) {
-                "#Issues table".callTableDnD(api, r, ref) // drag and drop
-                
-                $("#setting").fadeIn(1000)
-                new NewIssueForm(api, r, ref, ls, ms, iUIs)
-                new MilestoneForm(api, r, ms.getData.toList, iUIs)
-                new LabelForm(api, r, ls.getData.toList, iUIs)
-            }
+                if (api.authorized) {
+                    "#Issues table".callTableDnD(api, r, ref) // drag and drop
+                    
+                    $("#setting").fadeIn(1000)
+                    new NewIssueForm(api, r, ref, ls, ms, iUIs)
+                    new MilestoneForm(api, r, ms.getData.toList, iUIs)
+                    new LabelForm(api, r, ls.getData.toList, iUIs)
+                }
+            ]);
         ])
     }
     
-//    static XtendTimer timer
+    static XtendTimer timer
     def static setTimer(GitHubApi api, Repo repo, Reference ref) {
-        updateOrder(api, repo, ref)
-//        println("fugafuga")
-//        timer?.cancel
-//        timer = timer[|
-//            println("hoge")
-//        ]
-//        Window::addCloseHandler([println("barbar")])
-//        timer.schedule(5000)
+        timer?.cancel
+        timer = timer[|
+            updateOrder(api, repo, ref)
+        ]
+        timer.schedule(10000)
     }
     
     def static updateOrder(GitHubApi api, Repo repo, Reference ref) {
@@ -248,11 +262,10 @@ class BoostGitHub implements EntryPoint {
         $("#Issues .milestone").each(event[m|
             val milestoneNumber = $(m).attr("number")
             val issueNumbers = $(m).find(".issue").mapByAttr("number").join(",")
-            milestones.add("{milestone: " + milestoneNumber + ", issues: [" + issueNumbers + "]}")
+            milestones.add("{\"milestone\": " + milestoneNumber + ", \"issues\": [" + issueNumbers + "]}")
         ])
         
-        val updateJson = "{[\n" + milestones.join(",\n") + "\n]}"
-        println(updateJson)
+        val updateJson = "{\"orders\": [\n" + milestones.join(",\n") + "\n]}"
         api.createSimpleCommitAndPush(repo, ref, "boostgh", "order.json", updateJson, "updated order", callback[
             "#Issues table".callTableDnD(api, repo, it)
         ])
