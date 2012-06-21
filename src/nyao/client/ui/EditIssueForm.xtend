@@ -3,7 +3,7 @@ package nyao.client.ui
 import com.github.nyao.gwtgithub.client.GitHubApi
 import com.github.nyao.gwtgithub.client.models.issues.Issue
 import com.github.nyao.gwtgithub.client.models.issues.Label
-import com.github.nyao.gwtgithub.client.models.Repo
+import com.github.nyao.gwtgithub.client.models.repos.Repo
 import com.github.nyao.gwtgithub.client.values.issues.IssueValue
 import com.google.gwt.query.client.GQuery
 import java.util.List
