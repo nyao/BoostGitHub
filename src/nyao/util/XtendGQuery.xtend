@@ -8,10 +8,20 @@ import com.google.gwt.query.client.GQuery
 
 import static extension nyao.util.XtendGQuery.*
 import static extension nyao.util.ConversionJavaToXtend.*
+import com.google.gwt.core.client.JsArrayInteger
 
 class XtendGQuery {
     
     def static <T extends JavaScriptObject> each(JsArray<T> items, (T) => void f) {
+        var i = 0
+        while (i < items.lengthOr0) {
+            val r = items.get(i)
+            f.apply(r)
+            i = i + 1
+        }
+    }
+    
+    def static each(JsArrayInteger items, (Integer) => void f) {
         var i = 0
         while (i < items.lengthOr0) {
             val r = items.get(i)

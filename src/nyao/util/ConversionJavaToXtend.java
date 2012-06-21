@@ -5,10 +5,10 @@ import java.util.List;
 import static com.google.gwt.query.client.GQuery.*;
 
 import com.github.nyao.gwtgithub.client.GitHubApi;
-import com.github.nyao.gwtgithub.client.models.AJSON;
-import com.github.nyao.gwtgithub.client.models.Repo;
 import com.github.nyao.gwtgithub.client.models.gitdata.Reference;
+import com.github.nyao.gwtgithub.client.models.repos.Repo;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsArrayInteger;
 import com.google.gwt.query.client.Function;
 import com.google.gwt.query.client.GQuery;
 import com.google.gwt.user.client.Element;
@@ -30,7 +30,7 @@ public final class ConversionJavaToXtend {
     public native static void callTableDnD(String src, GitHubApi api, Repo repo, Reference ref) /*-{
         $wnd.jQuery(src).tableDnD({
             onDrop: function(table, row) {
-                @nyao.client.BoostGitHub::setTimer(Lcom/github/nyao/gwtgithub/client/GitHubApi;Lcom/github/nyao/gwtgithub/client/models/Repo;Lcom/github/nyao/gwtgithub/client/models/gitdata/Reference;)(api, repo, ref);
+                @nyao.client.BoostGitHub::setTimer(Lcom/github/nyao/gwtgithub/client/GitHubApi;Lcom/github/nyao/gwtgithub/client/models/repos/Repo;Lcom/github/nyao/gwtgithub/client/models/gitdata/Reference;)(api, repo, ref);
             }
         });
     }-*/;
@@ -38,7 +38,7 @@ public final class ConversionJavaToXtend {
     public native static void calltableDnDUpdate(String src, GitHubApi api, Repo repo, Reference ref) /*-{
         $wnd.jQuery(src).tableDnDUpdate({
             onDrop: function(table, row) {
-                @nyao.client.BoostGitHub::setTimer(Lcom/github/nyao/gwtgithub/client/GitHubApi;Lcom/github/nyao/gwtgithub/client/models/Repo;Lcom/github/nyao/gwtgithub/client/models/gitdata/Reference;)(api, repo, ref);
+                @nyao.client.BoostGitHub::setTimer(Lcom/github/nyao/gwtgithub/client/GitHubApi;Lcom/github/nyao/gwtgithub/client/models/repos/Repo;Lcom/github/nyao/gwtgithub/client/models/gitdata/Reference;)(api, repo, ref);
             }
         });
     }-*/;
@@ -58,6 +58,14 @@ public final class ConversionJavaToXtend {
     }
     
     public static final native int lengthOr0(JsArray<?> items) /*-{
+      if (items.length == null) {
+          return 0;
+      } else {
+          return items.length;
+      }
+    }-*/;
+    
+    public static final native int lengthOr0(JsArrayInteger items) /*-{
       if (items.length == null) {
           return 0;
       } else {
